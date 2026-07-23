@@ -41,10 +41,10 @@ section{margin-top:22px}.sectionHead{display:flex;justify-content:space-between;
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>财富仪表盘</h1><div class="sub">所有原始金额均由你手动填写</div></div><div class="updated" id="updated">尚未更新</div></header>
+<header><div><h1>财富仪表盘</h1><div class="sub">所有原始金额均由你手动填写，月末金额可后补</div></div><div class="updated" id="updated">尚未更新</div></header>
 <div class="grid4">
 <div class="card metric"><button class="targetBtn" id="openTarget"><div class="label">储蓄目标 · 点击设置</div><div class="value" id="targetValue">0</div><div class="hint">独立设置</div></button></div>
-<div class="card metric"><div class="label">当前储蓄</div><div class="value" id="currentValue">0</div><div class="hint">最新月份的月末储蓄</div></div>
+<div class="card metric"><div class="label">当前储蓄</div><div class="value" id="currentValue">0</div><div class="hint">最新月份：有月末取月末，无月末取月初</div></div>
 <div class="card metric"><div class="label">公积金</div><div class="value" id="fundValue">0</div><div class="hint">独立统计，不计入储蓄</div></div>
 <div class="card metric"><div class="label">距离目标</div><div class="value" id="remainingValue">0</div><div class="hint" id="remainingHint">尚未设置目标</div></div>
 </div>
@@ -55,12 +55,12 @@ section{margin-top:22px}.sectionHead{display:flex;justify-content:space-between;
 <div class="fields">
 <div><label for="month">月份</label><input type="month" id="month" required></div>
 <div><label for="start">月初储蓄</label><input type="number" min="0" step="0.01" inputmode="decimal" id="start" placeholder="请手动填写" required></div>
-<div><label for="end">月末储蓄</label><input type="number" min="0" step="0.01" inputmode="decimal" id="end" placeholder="请手动填写" required></div>
+<div><label for="end">月末储蓄（可后补）</label><input type="number" min="0" step="0.01" inputmode="decimal" id="end" placeholder="未到月末可暂不填写"></div>
 <div><label for="fund">公积金</label><input type="number" min="0" step="0.01" inputmode="decimal" id="fund" placeholder="请手动填写" required></div>
 <div class="full"><label for="note">备注（可选）</label><textarea id="note" placeholder="例如：奖金到账、大额支出、资金调拨等"></textarea></div>
 </div>
 <div class="formBtns"><button class="btn primary" type="submit" id="saveBtn">保存记录</button><button class="btn hidden" type="button" id="cancelBtn">取消编辑</button></div>
-<div class="notice">月初储蓄、月末储蓄和公积金不会自动继承或默认填写；系统只负责计算月度变化、当前储蓄、剩余目标和完成度。</div>
+<div class="notice">月初储蓄和公积金需手动填写；月末储蓄可暂不填写并保存，后续再编辑补充。当前储蓄优先取最新月份：有月末取月末，无月末取月初，若未填写则取该月月初储蓄。</div>
 </form>
 </section>
 
@@ -78,7 +78,7 @@ section{margin-top:22px}.sectionHead{display:flex;justify-content:space-between;
       <canvas id="trendChart"></canvas>
       <div class="chartEmpty hidden" id="chartEmpty">至少录入 2 个月的数据后，<br>这里会显示月度折线趋势。</div>
     </div>
-    <div class="chartNote">两条线分别按月份比较月初储蓄和月末储蓄，不会将月初自动等同于上月月末。</div>
+    <div class="chartNote">两条线分别按月份比较月初储蓄和月末储蓄；未填写月末的月份只显示月初数据。</div>
   </div>
 </section>
 
@@ -88,7 +88,7 @@ section{margin-top:22px}.sectionHead{display:flex;justify-content:space-between;
 <div class="toast" id="toast"></div>
 <script>
 const KEY="wealth_dashboard_v1",state={target:0,records:[],updatedAt:null,editing:null},$=id=>document.getElementById(id);
-const money=n=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Number(n)||0),monthText=m=>{const[y,mm]=m.split("-");return`${y}年${Number(mm)}月`},num=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const money=n=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Number(n)||0),optionalNum=v=>{if(v===""||v===null||v===undefined)return null;const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},monthText=m=>{const[y,mm]=m.split("-");return`${y}年${Number(mm)}月`},num=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>$("toast").classList.remove("show"),1800)}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null}catch(e){toast("本地数据读取失败")}}
 function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:1,target:state.target,records:state.records,updatedAt:state.updatedAt}))}
@@ -105,7 +105,7 @@ function drawTrendChart(){
   canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);
   const ctx=canvas.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);
   const W=rect.width,H=rect.height,pad={l:48,r:16,t:18,b:40};
-  const vals=rows.flatMap(r=>[Number(r.start),Number(r.end)]);
+  const vals=rows.flatMap(r=>r.end===null||r.end===undefined?[Number(r.start)]:[Number(r.start),Number(r.end)]);
   let min=Math.min(...vals),max=Math.max(...vals);
   if(min===max){min=Math.max(0,min-1);max=max+1}
   const span=max-min,extra=span*.12;min=Math.max(0,min-extra);max=max+extra;
@@ -126,24 +126,35 @@ function drawTrendChart(){
   });
   function line(key,color){
     ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin="round";ctx.lineCap="round";ctx.beginPath();
-    rows.forEach((r,i)=>{const xx=x(i),yy=y(Number(r[key]));i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)});ctx.stroke();
-    rows.forEach((r,i)=>{const xx=x(i),yy=y(Number(r[key]));ctx.fillStyle="#fff";ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.arc(xx,yy,4,0,Math.PI*2);ctx.fill();ctx.stroke()});
+    let drawing=false;
+    rows.forEach((r,i)=>{
+      const value=r[key];
+      if(value===null||value===undefined||value===""){drawing=false;return}
+      const xx=x(i),yy=y(Number(value));
+      if(drawing)ctx.lineTo(xx,yy);else{ctx.moveTo(xx,yy);drawing=true}
+    });
+    ctx.stroke();
+    rows.forEach((r,i)=>{
+      const value=r[key];
+      if(value===null||value===undefined||value==="")return;
+      const xx=x(i),yy=y(Number(value));ctx.fillStyle="#fff";ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.arc(xx,yy,4,0,Math.PI*2);ctx.fill();ctx.stroke()
+    });
   }
   line("start","#2f6fed");line("end","#1aa184");
 }
 
-function render(){const l=latest(),current=l?Number(l.end):0,fund=l?Number(l.fund):0,remain=state.target?Math.max(state.target-current,0):0,p=state.target?Math.min(current/state.target*100,100):0;
+function render(){const l=latest(),current=l?(l.end===null||l.end===undefined?Number(l.start):Number(l.end)):0,fund=l?Number(l.fund):0,remain=state.target?Math.max(state.target-current,0):0,p=state.target?Math.min(current/state.target*100,100):0;
 $("targetValue").textContent=money(state.target);$("currentValue").textContent=money(current);$("fundValue").textContent=money(fund);$("remainingValue").textContent=money(remain);$("remainingHint").textContent=state.target?(current>=state.target?"目标已完成":"还需继续积累"):"尚未设置目标";$("rate").textContent=`${p.toFixed(p%1?1:0)}%`;$("bar").style.width=`${p}%`;$("updated").textContent=state.updatedAt?`最后更新：${new Date(state.updatedAt).toLocaleString("zh-CN")}`:"尚未更新";
 const list=[...state.records].sort((a,b)=>b.month.localeCompare(a.month));$("records").innerHTML="";$("clearBtn").classList.toggle("hidden",!list.length);if(!list.length){drawTrendChart();$("records").innerHTML='<div class="card empty">还没有月度记录。<br>填写上方表单后，数据会保存在当前浏览器中。</div>';return}
-list.forEach(r=>{const diff=Number(r.end)-Number(r.start),rt=Number(r.start)>0?diff/Number(r.start)*100:null,sign=diff>0?"+":"",cls=diff>0?"pos":diff<0?"neg":"neu",rtxt=rt===null?"无法计算增长率":`${sign}${rt.toFixed(2)}%`;const a=document.createElement("article");a.className="card record";a.innerHTML=`<div class="recordTop"><div><div class="month">${monthText(r.month)}</div><div class="change ${cls}">本月变化 ${sign}${money(diff)} · ${rtxt}</div></div><div class="recordBtns"><button class="small" data-edit="${r.month}">编辑</button><button class="small del" data-del="${r.month}">删除</button></div></div><div class="recordGrid"><div class="item"><span>月初储蓄</span><strong>${money(r.start)}</strong></div><div class="item"><span>月末储蓄</span><strong>${money(r.end)}</strong></div><div class="item"><span>公积金</span><strong>${money(r.fund)}</strong></div><div class="item"><span>增加金额</span><strong class="${cls}">${sign}${money(diff)}</strong></div><div class="item"><span>增长率</span><strong class="${cls}">${rtxt}</strong></div></div>${r.note?`<div class="note">${esc(r.note)}</div>`:""}`;$("records").appendChild(a)});
+list.forEach(r=>{const hasEnd=r.end!==null&&r.end!==undefined&&r.end!=="",diff=hasEnd?Number(r.end)-Number(r.start):null,rt=hasEnd&&Number(r.start)>0?diff/Number(r.start)*100:null,sign=diff!==null&&diff>0?"+":"",cls=diff===null?"neu":diff>0?"pos":diff<0?"neg":"neu",rtxt=!hasEnd?"待填写":(rt===null?"无法计算增长率":`${sign}${rt.toFixed(2)}%`),diffText=!hasEnd?"待填写":`${sign}${money(diff)}`;const a=document.createElement("article");a.className="card record";a.innerHTML=`<div class="recordTop"><div><div class="month">${monthText(r.month)}</div><div class="change ${cls}">本月变化 ${diffText} · ${rtxt}</div></div><div class="recordBtns"><button class="small" data-edit="${r.month}">编辑</button><button class="small del" data-del="${r.month}">删除</button></div></div><div class="recordGrid"><div class="item"><span>月初储蓄</span><strong>${money(r.start)}</strong></div><div class="item"><span>月末储蓄</span><strong>${hasEnd?money(r.end):"待填写"}</strong></div><div class="item"><span>公积金</span><strong>${money(r.fund)}</strong></div><div class="item"><span>增加金额</span><strong class="${cls}">${diffText}</strong></div><div class="item"><span>增长率</span><strong class="${cls}">${rtxt}</strong></div></div>${r.note?`<div class="note">${esc(r.note)}</div>`:""}`;$("records").appendChild(a)});
 drawTrendChart();
 document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>edit(b.dataset.edit));document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>remove(b.dataset.del))}
 function reset(){$("form").reset();state.editing=null;$("formTitle").textContent="新增月度记录";$("saveBtn").textContent="保存记录";$("cancelBtn").classList.add("hidden")}
-function edit(m){const r=state.records.find(x=>x.month===m);if(!r)return;state.editing=m;$("month").value=r.month;$("start").value=r.start;$("end").value=r.end;$("fund").value=r.fund;$("note").value=r.note||"";$("formTitle").textContent=`编辑 ${monthText(m)}`;$("saveBtn").textContent="保存修改";$("cancelBtn").classList.remove("hidden");$("form").scrollIntoView({behavior:"smooth"})}
+function edit(m){const r=state.records.find(x=>x.month===m);if(!r)return;state.editing=m;$("month").value=r.month;$("start").value=r.start;$("end").value=r.end===null||r.end===undefined?"":r.end;$("fund").value=r.fund;$("note").value=r.note||"";$("formTitle").textContent=`编辑 ${monthText(m)}`;$("saveBtn").textContent="保存修改";$("cancelBtn").classList.remove("hidden");$("form").scrollIntoView({behavior:"smooth"})}
 function remove(m){if(!confirm(`确认删除 ${monthText(m)} 的记录吗？`))return;state.records=state.records.filter(r=>r.month!==m);if(state.editing===m)reset();save();render();toast("记录已删除")}
-$("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num($("start").value),end=num($("end").value),fund=num($("fund").value),note=$("note").value.trim();if(!month||start===null||end===null||fund===null)return toast("请完整填写月份和三项金额");if(state.records.some(r=>r.month===month&&r.month!==state.editing))return toast("该月份已存在，请编辑已有记录");const wasEditing=!!state.editing,r={month,start,end,fund,note};state.records=wasEditing?state.records.map(x=>x.month===state.editing?r:x):[...state.records,r];save();reset();render();toast(wasEditing?"记录已更新":"记录已保存")};
+$("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num($("start").value),end=optionalNum($("end").value),fund=num($("fund").value),note=$("note").value.trim();if(!month||start===null||fund===null)return toast("请填写月份、月初储蓄和公积金");if(state.records.some(r=>r.month===month&&r.month!==state.editing))return toast("该月份已存在，请编辑已有记录");const wasEditing=!!state.editing,r={month,start,end,fund,note};state.records=wasEditing?state.records.map(x=>x.month===state.editing?r:x):[...state.records,r];save();reset();render();toast(wasEditing?"记录已更新":"记录已保存")};
 $("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value=state.target||"";$("modal").classList.add("open")};$("closeModal").onclick=()=>$("modal").classList.remove("open");$("saveTarget").onclick=()=>{const v=num($("targetInput").value);if(v===null)return toast("请输入有效目标金额");state.target=v;save();render();$("modal").classList.remove("open");toast("目标已保存")};$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("open")};
 $("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"财富仪表盘",version:1,target:state.target,records:state.records,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`财富仪表盘备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
-$("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:num(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.end===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
+$("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:optionalNum(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
 $("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});load();render();
 </script></body></html>
