@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f7fb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="财富仪表盘">
+<title>财富仪表盘</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon-32.png">
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#7a8496;--line:#e8edf4;--blue:#2f6fed;--green:#1aa184;--red:#d84d4d;--shadow:0 10px 30px rgba(23,45,79,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}
+.wrap{max-width:980px;margin:auto;padding:24px 16px 40px}header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}h1{margin:0 0 6px;font-size:28px}.sub,.updated{color:var(--muted);font-size:13px}.updated{white-space:nowrap;padding-top:8px}
+.grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}.metric{padding:17px}.label{font-size:13px;color:var(--muted);margin-bottom:8px}.value{font-size:clamp(23px,6vw,32px);font-weight:750;overflow-wrap:anywhere}.hint{font-size:12px;color:var(--muted);margin-top:6px}.targetBtn{border:0;background:transparent;padding:0;text-align:left;width:100%;color:inherit}
+.progress{padding:18px;margin-top:12px}.progressHead{display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;font-weight:700}.bar{height:11px;background:#e8edf5;border-radius:999px;overflow:hidden}.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:999px}
+section{margin-top:22px}.sectionHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}h2{font-size:18px;margin:0}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:white;color:var(--text);border-radius:13px;padding:10px 13px;font-weight:700}.btn.primary{background:var(--blue);border-color:var(--blue);color:white}.btn.red{color:var(--red)}
+.form{padding:17px}.fields{display:grid;grid-template-columns:1fr;gap:13px}label{display:block;color:var(--muted);font-size:13px;margin-bottom:7px}input,textarea{width:100%;border:1px solid var(--line);border-radius:13px;padding:12px 13px;background:#fbfdff;outline:none}textarea{min-height:82px;resize:vertical}input:focus,textarea:focus{border-color:#8fb0f1;box-shadow:0 0 0 3px rgba(47,111,237,.1)}
+.formBtns{display:flex;gap:10px;margin-top:15px}.formBtns .btn{flex:1}.notice{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.6}
+.records{display:grid;gap:11px}.record{padding:16px}.recordTop{display:flex;justify-content:space-between;gap:12px}.month{font-size:18px;font-weight:800}.change{font-size:13px;font-weight:700;margin-top:4px}.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--muted)}.recordBtns{display:flex;gap:6px}.small{border:0;border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;background:#edf4ff;color:var(--blue)}.small.del{background:#fff0f0;color:var(--red)}
+.recordGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.item{background:#f8fafc;border-radius:13px;padding:10px 9px;min-width:0}.item span{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.item strong{font-size:14px;overflow-wrap:anywhere}.note{font-size:13px;color:#526076;line-height:1.6;margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}.empty{text-align:center;padding:34px 20px;color:var(--muted);line-height:1.7}.hidden{display:none!important}
+.modalWrap{position:fixed;inset:0;background:rgba(13,25,45,.35);display:none;align-items:flex-end;justify-content:center;padding:16px;z-index:20}.modalWrap.open{display:flex}.modal{width:min(100%,460px);background:#fff;border-radius:22px;padding:19px}.modal h3{margin:0 0 6px}.modal p{margin:0 0 14px;color:var(--muted);font-size:13px}.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#172033;color:#fff;border-radius:999px;padding:11px 17px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:30}.toast.show{opacity:1;transform:translate(-50%,-5px)}
+@media(min-width:720px){.grid4{grid-template-columns:repeat(4,1fr)}.fields{grid-template-columns:repeat(2,1fr)}.full{grid-column:1/-1}.recordGrid{grid-template-columns:repeat(5,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div><h1>财富仪表盘</h1><div class="sub">所有原始金额均由你手动填写</div></div><div class="updated" id="updated">尚未更新</div></header>
+<div class="grid4">
+<div class="card metric"><button class="targetBtn" id="openTarget"><div class="label">储蓄目标 · 点击设置</div><div class="value" id="targetValue">0</div><div class="hint">独立设置</div></button></div>
+<div class="card metric"><div class="label">当前储蓄</div><div class="value" id="currentValue">0</div><div class="hint">最新月份的月末储蓄</div></div>
+<div class="card metric"><div class="label">公积金</div><div class="value" id="fundValue">0</div><div class="hint">独立统计，不计入储蓄</div></div>
+<div class="card metric"><div class="label">距离目标</div><div class="value" id="remainingValue">0</div><div class="hint" id="remainingHint">尚未设置目标</div></div>
+</div>
+<div class="card progress"><div class="progressHead"><span>储蓄目标完成度</span><span id="rate">0%</span></div><div class="bar"><span id="bar"></span></div></div>
+<section>
+<div class="sectionHead"><h2 id="formTitle">新增月度记录</h2><div class="actions"><button class="btn" id="exportBtn">导出数据</button><button class="btn" id="importBtn">导入数据</button><input class="hidden" type="file" id="fileInput" accept=".json,application/json"></div></div>
+<form class="card form" id="form">
+<div class="fields">
+<div><label for="month">月份</label><input type="month" id="month" required></div>
+<div><label for="start">月初储蓄</label><input type="number" min="0" step="0.01" inputmode="decimal" id="start" placeholder="请手动填写" required></div>
+<div><label for="end">月末储蓄</label><input type="number" min="0" step="0.01" inputmode="decimal" id="end" placeholder="请手动填写" required></div>
+<div><label for="fund">公积金</label><input type="number" min="0" step="0.01" inputmode="decimal" id="fund" placeholder="请手动填写" required></div>
+<div class="full"><label for="note">备注（可选）</label><textarea id="note" placeholder="例如：奖金到账、大额支出、资金调拨等"></textarea></div>
+</div>
+<div class="formBtns"><button class="btn primary" type="submit" id="saveBtn">保存记录</button><button class="btn hidden" type="button" id="cancelBtn">取消编辑</button></div>
+<div class="notice">月初储蓄、月末储蓄和公积金不会自动继承或默认填写；系统只负责计算月度变化、当前储蓄、剩余目标和完成度。</div>
+</form>
+</section>
+<section><div class="sectionHead"><h2>月度记录</h2><button class="btn red hidden" id="clearBtn">清空全部</button></div><div class="records" id="records"></div></section>
+</div>
+<div class="modalWrap" id="modal"><div class="modal"><h3>设置储蓄目标</h3><p>目标只影响进度计算，不会修改月度记录。</p><label for="targetInput">目标金额</label><input id="targetInput" type="number" min="0" step="0.01" inputmode="decimal" placeholder="请手动填写"><div class="formBtns"><button class="btn" id="closeModal">取消</button><button class="btn primary" id="saveTarget">保存目标</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const KEY="wealth_dashboard_v1",state={target:0,records:[],updatedAt:null,editing:null},$=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Number(n)||0),monthText=m=>{const[y,mm]=m.split("-");return`${y}年${Number(mm)}月`},num=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>$("toast").classList.remove("show"),1800)}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null}catch(e){toast("本地数据读取失败")}}
+function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:1,target:state.target,records:state.records,updatedAt:state.updatedAt}))}
+function latest(){return[...state.records].sort((a,b)=>b.month.localeCompare(a.month))[0]||null}
+function render(){const l=latest(),current=l?Number(l.end):0,fund=l?Number(l.fund):0,remain=state.target?Math.max(state.target-current,0):0,p=state.target?Math.min(current/state.target*100,100):0;
+$("targetValue").textContent=money(state.target);$("currentValue").textContent=money(current);$("fundValue").textContent=money(fund);$("remainingValue").textContent=money(remain);$("remainingHint").textContent=state.target?(current>=state.target?"目标已完成":"还需继续积累"):"尚未设置目标";$("rate").textContent=`${p.toFixed(p%1?1:0)}%`;$("bar").style.width=`${p}%`;$("updated").textContent=state.updatedAt?`最后更新：${new Date(state.updatedAt).toLocaleString("zh-CN")}`:"尚未更新";
+const list=[...state.records].sort((a,b)=>b.month.localeCompare(a.month));$("records").innerHTML="";$("clearBtn").classList.toggle("hidden",!list.length);if(!list.length){$("records").innerHTML='<div class="card empty">还没有月度记录。<br>填写上方表单后，数据会保存在当前浏览器中。</div>';return}
+list.forEach(r=>{const diff=Number(r.end)-Number(r.start),rt=Number(r.start)>0?diff/Number(r.start)*100:null,sign=diff>0?"+":"",cls=diff>0?"pos":diff<0?"neg":"neu",rtxt=rt===null?"无法计算增长率":`${sign}${rt.toFixed(2)}%`;const a=document.createElement("article");a.className="card record";a.innerHTML=`<div class="recordTop"><div><div class="month">${monthText(r.month)}</div><div class="change ${cls}">本月变化 ${sign}${money(diff)} · ${rtxt}</div></div><div class="recordBtns"><button class="small" data-edit="${r.month}">编辑</button><button class="small del" data-del="${r.month}">删除</button></div></div><div class="recordGrid"><div class="item"><span>月初储蓄</span><strong>${money(r.start)}</strong></div><div class="item"><span>月末储蓄</span><strong>${money(r.end)}</strong></div><div class="item"><span>公积金</span><strong>${money(r.fund)}</strong></div><div class="item"><span>增加金额</span><strong class="${cls}">${sign}${money(diff)}</strong></div><div class="item"><span>增长率</span><strong class="${cls}">${rtxt}</strong></div></div>${r.note?`<div class="note">${esc(r.note)}</div>`:""}`;$("records").appendChild(a)});
+document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>edit(b.dataset.edit));document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>remove(b.dataset.del))}
+function reset(){$("form").reset();state.editing=null;$("formTitle").textContent="新增月度记录";$("saveBtn").textContent="保存记录";$("cancelBtn").classList.add("hidden")}
+function edit(m){const r=state.records.find(x=>x.month===m);if(!r)return;state.editing=m;$("month").value=r.month;$("start").value=r.start;$("end").value=r.end;$("fund").value=r.fund;$("note").value=r.note||"";$("formTitle").textContent=`编辑 ${monthText(m)}`;$("saveBtn").textContent="保存修改";$("cancelBtn").classList.remove("hidden");$("form").scrollIntoView({behavior:"smooth"})}
+function remove(m){if(!confirm(`确认删除 ${monthText(m)} 的记录吗？`))return;state.records=state.records.filter(r=>r.month!==m);if(state.editing===m)reset();save();render();toast("记录已删除")}
+$("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num($("start").value),end=num($("end").value),fund=num($("fund").value),note=$("note").value.trim();if(!month||start===null||end===null||fund===null)return toast("请完整填写月份和三项金额");if(state.records.some(r=>r.month===month&&r.month!==state.editing))return toast("该月份已存在，请编辑已有记录");const wasEditing=!!state.editing,r={month,start,end,fund,note};state.records=wasEditing?state.records.map(x=>x.month===state.editing?r:x):[...state.records,r];save();reset();render();toast(wasEditing?"记录已更新":"记录已保存")};
+$("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value=state.target||"";$("modal").classList.add("open")};$("closeModal").onclick=()=>$("modal").classList.remove("open");$("saveTarget").onclick=()=>{const v=num($("targetInput").value);if(v===null)return toast("请输入有效目标金额");state.target=v;save();render();$("modal").classList.remove("open");toast("目标已保存")};$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("open")};
+$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"财富仪表盘",version:1,target:state.target,records:state.records,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`财富仪表盘备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
+$("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:num(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.end===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
+$("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};load();render();
+</script></body></html>
