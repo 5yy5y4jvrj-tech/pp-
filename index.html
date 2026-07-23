@@ -22,6 +22,20 @@ section{margin-top:22px}.sectionHead{display:flex;justify-content:space-between;
 .records{display:grid;gap:11px}.record{padding:16px}.recordTop{display:flex;justify-content:space-between;gap:12px}.month{font-size:18px;font-weight:800}.change{font-size:13px;font-weight:700;margin-top:4px}.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--muted)}.recordBtns{display:flex;gap:6px}.small{border:0;border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;background:#edf4ff;color:var(--blue)}.small.del{background:#fff0f0;color:var(--red)}
 .recordGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.item{background:#f8fafc;border-radius:13px;padding:10px 9px;min-width:0}.item span{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.item strong{font-size:14px;overflow-wrap:anywhere}.note{font-size:13px;color:#526076;line-height:1.6;margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}.empty{text-align:center;padding:34px 20px;color:var(--muted);line-height:1.7}.hidden{display:none!important}
 .modalWrap{position:fixed;inset:0;background:rgba(13,25,45,.35);display:none;align-items:flex-end;justify-content:center;padding:16px;z-index:20}.modalWrap.open{display:flex}.modal{width:min(100%,460px);background:#fff;border-radius:22px;padding:19px}.modal h3{margin:0 0 6px}.modal p{margin:0 0 14px;color:var(--muted);font-size:13px}.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#172033;color:#fff;border-radius:999px;padding:11px 17px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:30}.toast.show{opacity:1;transform:translate(-50%,-5px)}
+
+.chartCard{padding:16px}
+.chartHead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.chartTitle{font-size:16px;font-weight:800}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legendItem{display:flex;align-items:center;gap:6px}
+.legendDot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.legendDot.start{background:var(--blue)}
+.legendDot.end{background:var(--green)}
+.chartWrap{position:relative;width:100%;height:260px}
+#trendChart{width:100%;height:100%;display:block}
+.chartEmpty{height:220px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:13px;line-height:1.6}
+.chartNote{margin-top:9px;color:var(--muted);font-size:12px}
+
 @media(min-width:720px){.grid4{grid-template-columns:repeat(4,1fr)}.fields{grid-template-columns:repeat(2,1fr)}.full{grid-column:1/-1}.recordGrid{grid-template-columns:repeat(5,1fr)}}
 </style>
 </head>
@@ -49,6 +63,25 @@ section{margin-top:22px}.sectionHead{display:flex;justify-content:space-between;
 <div class="notice">月初储蓄、月末储蓄和公积金不会自动继承或默认填写；系统只负责计算月度变化、当前储蓄、剩余目标和完成度。</div>
 </form>
 </section>
+
+<section>
+  <div class="sectionHead"><h2>月度趋势</h2></div>
+  <div class="card chartCard">
+    <div class="chartHead">
+      <div class="chartTitle">月初与月末储蓄对比</div>
+      <div class="legend">
+        <span class="legendItem"><i class="legendDot start"></i>月初储蓄</span>
+        <span class="legendItem"><i class="legendDot end"></i>月末储蓄</span>
+      </div>
+    </div>
+    <div class="chartWrap" id="chartWrap">
+      <canvas id="trendChart"></canvas>
+      <div class="chartEmpty hidden" id="chartEmpty">至少录入 2 个月的数据后，<br>这里会显示月度折线趋势。</div>
+    </div>
+    <div class="chartNote">两条线分别按月份比较月初储蓄和月末储蓄，不会将月初自动等同于上月月末。</div>
+  </div>
+</section>
+
 <section><div class="sectionHead"><h2>月度记录</h2><button class="btn red hidden" id="clearBtn">清空全部</button></div><div class="records" id="records"></div></section>
 </div>
 <div class="modalWrap" id="modal"><div class="modal"><h3>设置储蓄目标</h3><p>目标只影响进度计算，不会修改月度记录。</p><label for="targetInput">目标金额</label><input id="targetInput" type="number" min="0" step="0.01" inputmode="decimal" placeholder="请手动填写"><div class="formBtns"><button class="btn" id="closeModal">取消</button><button class="btn primary" id="saveTarget">保存目标</button></div></div></div>
@@ -60,10 +93,50 @@ function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clea
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null}catch(e){toast("本地数据读取失败")}}
 function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:1,target:state.target,records:state.records,updatedAt:state.updatedAt}))}
 function latest(){return[...state.records].sort((a,b)=>b.month.localeCompare(a.month))[0]||null}
+
+function drawTrendChart(){
+  const canvas=$("trendChart"),empty=$("chartEmpty");
+  const rows=[...state.records].sort((a,b)=>a.month.localeCompare(b.month));
+  if(rows.length<2){
+    canvas.classList.add("hidden");empty.classList.remove("hidden");return;
+  }
+  canvas.classList.remove("hidden");empty.classList.add("hidden");
+  const rect=canvas.parentElement.getBoundingClientRect(),dpr=Math.max(1,window.devicePixelRatio||1);
+  canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);
+  const ctx=canvas.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);
+  const W=rect.width,H=rect.height,pad={l:48,r:16,t:18,b:40};
+  const vals=rows.flatMap(r=>[Number(r.start),Number(r.end)]);
+  let min=Math.min(...vals),max=Math.max(...vals);
+  if(min===max){min=Math.max(0,min-1);max=max+1}
+  const span=max-min,extra=span*.12;min=Math.max(0,min-extra);max=max+extra;
+  const x=i=>pad.l+(rows.length===1?0:(W-pad.l-pad.r)*i/(rows.length-1));
+  const y=v=>pad.t+(H-pad.t-pad.b)*(1-(v-min)/(max-min));
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle="#e8edf4";ctx.lineWidth=1;ctx.fillStyle="#7a8496";ctx.font="11px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
+  for(let i=0;i<4;i++){
+    const yy=pad.t+(H-pad.t-pad.b)*i/3,value=max-(max-min)*i/3;
+    ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(W-pad.r,yy);ctx.stroke();
+    ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText(money(Math.round(value)),pad.l-7,yy);
+  }
+  rows.forEach((r,i)=>{
+    const xx=x(i);
+    ctx.fillStyle="#7a8496";ctx.textAlign="center";ctx.textBaseline="top";
+    const label=r.month.slice(2).replace("-","/");
+    ctx.fillText(label,xx,H-pad.b+11);
+  });
+  function line(key,color){
+    ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin="round";ctx.lineCap="round";ctx.beginPath();
+    rows.forEach((r,i)=>{const xx=x(i),yy=y(Number(r[key]));i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)});ctx.stroke();
+    rows.forEach((r,i)=>{const xx=x(i),yy=y(Number(r[key]));ctx.fillStyle="#fff";ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.arc(xx,yy,4,0,Math.PI*2);ctx.fill();ctx.stroke()});
+  }
+  line("start","#2f6fed");line("end","#1aa184");
+}
+
 function render(){const l=latest(),current=l?Number(l.end):0,fund=l?Number(l.fund):0,remain=state.target?Math.max(state.target-current,0):0,p=state.target?Math.min(current/state.target*100,100):0;
 $("targetValue").textContent=money(state.target);$("currentValue").textContent=money(current);$("fundValue").textContent=money(fund);$("remainingValue").textContent=money(remain);$("remainingHint").textContent=state.target?(current>=state.target?"目标已完成":"还需继续积累"):"尚未设置目标";$("rate").textContent=`${p.toFixed(p%1?1:0)}%`;$("bar").style.width=`${p}%`;$("updated").textContent=state.updatedAt?`最后更新：${new Date(state.updatedAt).toLocaleString("zh-CN")}`:"尚未更新";
-const list=[...state.records].sort((a,b)=>b.month.localeCompare(a.month));$("records").innerHTML="";$("clearBtn").classList.toggle("hidden",!list.length);if(!list.length){$("records").innerHTML='<div class="card empty">还没有月度记录。<br>填写上方表单后，数据会保存在当前浏览器中。</div>';return}
+const list=[...state.records].sort((a,b)=>b.month.localeCompare(a.month));$("records").innerHTML="";$("clearBtn").classList.toggle("hidden",!list.length);if(!list.length){drawTrendChart();$("records").innerHTML='<div class="card empty">还没有月度记录。<br>填写上方表单后，数据会保存在当前浏览器中。</div>';return}
 list.forEach(r=>{const diff=Number(r.end)-Number(r.start),rt=Number(r.start)>0?diff/Number(r.start)*100:null,sign=diff>0?"+":"",cls=diff>0?"pos":diff<0?"neg":"neu",rtxt=rt===null?"无法计算增长率":`${sign}${rt.toFixed(2)}%`;const a=document.createElement("article");a.className="card record";a.innerHTML=`<div class="recordTop"><div><div class="month">${monthText(r.month)}</div><div class="change ${cls}">本月变化 ${sign}${money(diff)} · ${rtxt}</div></div><div class="recordBtns"><button class="small" data-edit="${r.month}">编辑</button><button class="small del" data-del="${r.month}">删除</button></div></div><div class="recordGrid"><div class="item"><span>月初储蓄</span><strong>${money(r.start)}</strong></div><div class="item"><span>月末储蓄</span><strong>${money(r.end)}</strong></div><div class="item"><span>公积金</span><strong>${money(r.fund)}</strong></div><div class="item"><span>增加金额</span><strong class="${cls}">${sign}${money(diff)}</strong></div><div class="item"><span>增长率</span><strong class="${cls}">${rtxt}</strong></div></div>${r.note?`<div class="note">${esc(r.note)}</div>`:""}`;$("records").appendChild(a)});
+drawTrendChart();
 document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>edit(b.dataset.edit));document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>remove(b.dataset.del))}
 function reset(){$("form").reset();state.editing=null;$("formTitle").textContent="新增月度记录";$("saveBtn").textContent="保存记录";$("cancelBtn").classList.add("hidden")}
 function edit(m){const r=state.records.find(x=>x.month===m);if(!r)return;state.editing=m;$("month").value=r.month;$("start").value=r.start;$("end").value=r.end;$("fund").value=r.fund;$("note").value=r.note||"";$("formTitle").textContent=`编辑 ${monthText(m)}`;$("saveBtn").textContent="保存修改";$("cancelBtn").classList.remove("hidden");$("form").scrollIntoView({behavior:"smooth"})}
@@ -72,5 +145,5 @@ $("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num
 $("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value=state.target||"";$("modal").classList.add("open")};$("closeModal").onclick=()=>$("modal").classList.remove("open");$("saveTarget").onclick=()=>{const v=num($("targetInput").value);if(v===null)return toast("请输入有效目标金额");state.target=v;save();render();$("modal").classList.remove("open");toast("目标已保存")};$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("open")};
 $("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"财富仪表盘",version:1,target:state.target,records:state.records,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`财富仪表盘备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
 $("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:num(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.end===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
-$("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};load();render();
+$("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});load();render();
 </script></body></html>
