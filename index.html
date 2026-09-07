@@ -108,6 +108,49 @@ input:focus,textarea:focus{border-color:#7eb5a4;box-shadow:0 0 0 3px rgba(23,107
 .progress .bar span{background:linear-gradient(90deg,#2c8066,#75a996)}
 .pos{color:#17875f}.neg{color:#d45b5b}
 
+
+/* V2.3 refinement */
+.icon{width:20px;height:20px;display:inline-block;vertical-align:-4px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sectionTitle{display:flex;align-items:center;gap:8px}
+.hero{
+  background:linear-gradient(145deg,#1e5f4b,#184d3e);
+  color:#fff;
+  border-color:rgba(255,255,255,.08);
+  box-shadow:0 14px 34px rgba(24,77,62,.20);
+}
+.hero .label,.hero .hint{color:rgba(255,255,255,.75)}
+.heroValue{color:#fff}
+.heroMeta{color:rgba(255,255,255,.92)}
+.hero .bar{background:rgba(255,255,255,.20)}
+.hero .bar span{background:linear-gradient(90deg,#a8d5c5,#e1f3ec)}
+.heroBottom{border-top-color:rgba(255,255,255,.18)}
+.heroBottom>div+div{border-left-color:rgba(255,255,255,.18)}
+.heroSmall{color:#fff}
+.hero .targetBtn{color:#fff}
+.monthMinor.pending{
+  color:#e96f13;
+  background:#fff1e4;
+  border-radius:999px;
+  display:inline-block;
+  padding:5px 11px;
+  font-size:18px;
+}
+.recordTableWrap{overflow-x:auto;border-radius:18px;border:1px solid var(--line);background:#fff}
+.recordTable{width:100%;border-collapse:collapse;min-width:720px}
+.recordTable th,.recordTable td{padding:13px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;white-space:nowrap}
+.recordTable th{color:var(--muted);font-weight:700;background:#fbfdfc}
+.recordTable tr:last-child td{border-bottom:0}
+.statusPill{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:800}
+.statusPill.running{background:#fff0e3;color:#e06b12}
+.statusPill.done{background:#e9f6f0;color:#177b59}
+.tableActions{display:flex;gap:8px}
+.tableAction{border:0;background:transparent;padding:0;color:#176b52;font-weight:700}
+.tableAction.delete{color:#c95c5c}
+@media(max-width:640px){
+  .recordTable{min-width:680px}
+  .recordTable th,.recordTable td{padding:11px 10px;font-size:12px}
+}
+
 </style>
 </head>
 <body>
@@ -176,9 +219,18 @@ function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clea
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null}catch(e){toast("本地数据读取失败")}}
 function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.1,target:state.target,records:state.records,updatedAt:state.updatedAt}))}
 function latest(){return[...state.records].sort((a,b)=>b.month.localeCompare(a.month))[0]||null}
+
+const ICONS={
+  calendar:`<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>`,
+  chart:`<svg class="icon" viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/></svg>`,
+  edit:`<svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>`,
+  target:`<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 2v3M22 12h-3M12 22v-3M2 12h3"/></svg>`,
+  wallet:`<svg class="icon" viewBox="0 0 24 24"><path d="M3 7h15a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H5a2 2 0 0 1-2-2V7z"/><path d="M3 7l2-3h12"/><path d="M17 12h4"/></svg>`
+};
+
 function effectiveValue(r){return r?(r.end===null||r.end===undefined||r.end===""?Number(r.start):Number(r.end)):0}
 function currentMonthKey(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
-function renderMonthStatus(){const key=currentMonthKey(),r=state.records.find(x=>x.month===key);$("monthName").textContent=monthText(key);if(!r){$("monthCurrentValue").textContent="—";$("monthStartValue").textContent="—";$("monthChangeValue").textContent="—";$("monthStatus").textContent="暂无记录";$("monthStatus").className="badge running";$("monthStatusHint").textContent="新增本月记录后显示";return}const has=r.end!==null&&r.end!==undefined&&r.end!=="",cur=effectiveValue(r);$("monthCurrentValue").textContent=money(cur);$("monthStartValue").textContent=money(r.start);if(has){const d=Number(r.end)-Number(r.start),sg=d>0?"+":"";$("monthChangeValue").textContent=`${sg}${money(d)}`;$("monthChangeValue").className=`monthMinor ${d>0?"pos":d<0?"neg":"neu"}`;$("monthStatus").textContent="已完成";$("monthStatus").className="badge done";$("monthStatusHint").textContent="月末储蓄已填写，本月已完成"}else{$("monthChangeValue").textContent="待结算";$("monthChangeValue").className="monthMinor neu";$("monthStatus").textContent="进行中";$("monthStatus").className="badge running";$("monthStatusHint").textContent="月末储蓄尚未填写，当前按月初储蓄计算"}}
+function renderMonthStatus(){const key=currentMonthKey(),r=state.records.find(x=>x.month===key);$("monthName").textContent=monthText(key);if(!r){$("monthCurrentValue").textContent="—";$("monthStartValue").textContent="—";$("monthChangeValue").textContent="—";$("monthStatus").textContent="暂无记录";$("monthStatus").className="badge running";$("monthStatusHint").textContent="新增本月记录后显示";return}const has=r.end!==null&&r.end!==undefined&&r.end!=="",cur=effectiveValue(r);$("monthCurrentValue").textContent=money(cur);$("monthStartValue").textContent=money(r.start);if(has){const d=Number(r.end)-Number(r.start),sg=d>0?"+":"";$("monthChangeValue").textContent=`${sg}${money(d)}`;$("monthChangeValue").className=`monthMinor ${d>0?"pos":d<0?"neg":"neu"}`;$("monthStatus").textContent="已完成";$("monthStatus").className="badge done";$("monthStatusHint").textContent="月末储蓄已填写，本月已完成"}else{$("monthChangeValue").textContent="待结算";$("monthChangeValue").className="monthMinor pending";$("monthStatus").textContent="进行中";$("monthStatus").className="badge running";$("monthStatusHint").textContent="月末储蓄尚未填写，当前按月初储蓄计算"}}
 function renderYearOptions(){const s=$("yearSelect"),ys=[...new Set(state.records.map(r=>r.month.slice(0,4)))].sort((a,b)=>b.localeCompare(a)),now=String(new Date().getFullYear()),old=s.value,opts=ys.length?ys:[now];s.innerHTML=opts.map(y=>`<option value="${y}">${y}年</option>`).join("");s.value=opts.includes(old)?old:(opts.includes(now)?now:opts[0]);renderYearSummary()}
 function renderYearSummary(){const y=$("yearSelect").value,rows=[...state.records].filter(r=>r.month.startsWith(y+"-")).sort((a,b)=>a.month.localeCompare(b.month));$("yearTitle").textContent=`年度储蓄概览 · ${y}`;if(!rows.length){["yearStart","yearCurrent","yearChange","yearHigh","yearRemaining"].forEach(id=>$(id).textContent="—");return}const start=Number(rows[0].start),cur=effectiveValue(rows.at(-1)),high=Math.max(...rows.map(effectiveValue)),chg=cur-start,sg=chg>0?"+":"";$("yearStart").textContent=money(start);$("yearCurrent").textContent=money(cur);$("yearChange").textContent=`${sg}${money(chg)}`;$("yearChange").className=`yearValue ${chg>0?"pos":chg<0?"neg":"neu"}`;$("yearHigh").textContent=money(high);$("yearRemaining").textContent=state.target?money(Math.max(state.target-cur,0)):"—"}
 function setDefaultMonth(){if(!state.editing)$("month").value=currentMonthKey()}
@@ -238,8 +290,30 @@ function drawTrendChart(){
 
 function render(){renderMonthStatus();renderYearOptions();const l=latest(),current=l?(l.end===null||l.end===undefined?Number(l.start):Number(l.end)):0,fund=l?Number(l.fund):0,remain=state.target?Math.max(state.target-current,0):0,p=state.target?Math.min(current/state.target*100,100):0;
 $("targetValue").textContent=money(state.target);$("currentValue").textContent=money(current);$("fundValue").textContent=money(fund);$("remainingValue").textContent=money(remain);$("remainingHint").textContent=state.target?(current>=state.target?"目标已完成":"还需继续积累"):"尚未设置目标";$("rate").textContent=`${p.toFixed(p%1?1:0)}%`;$("bar").style.width=`${p}%`;$("updated").textContent=state.updatedAt?`最后更新：${new Date(state.updatedAt).toLocaleString("zh-CN")}`:"尚未更新";
-const list=[...state.records].sort((a,b)=>b.month.localeCompare(a.month));$("records").innerHTML="";$("clearBtn").classList.toggle("hidden",!list.length);if(!list.length){drawTrendChart();$("records").innerHTML='<div class="card empty">还没有月度记录。<br>填写上方表单后，数据会保存在当前浏览器中。</div>';return}
-list.forEach(r=>{const hasEnd=r.end!==null&&r.end!==undefined&&r.end!=="",diff=hasEnd?Number(r.end)-Number(r.start):null,rt=hasEnd&&Number(r.start)>0?diff/Number(r.start)*100:null,sign=diff!==null&&diff>0?"+":"",cls=diff===null?"neu":diff>0?"pos":diff<0?"neg":"neu",rtxt=!hasEnd?"待填写":(rt===null?"无法计算增长率":`${sign}${rt.toFixed(2)}%`),diffText=!hasEnd?"待填写":`${sign}${money(diff)}`;const a=document.createElement("article");a.className="card record";a.innerHTML=`<div class="recordTop"><div><div class="month">${monthText(r.month)}</div><div class="change ${cls}">本月变化 ${diffText} · ${rtxt}</div></div><div class="recordBtns"><button class="small" data-edit="${r.month}">编辑</button><button class="small del" data-del="${r.month}">删除</button></div></div><div class="recordGrid"><div class="item"><span>月初储蓄</span><strong>${money(r.start)}</strong></div><div class="item"><span>月末储蓄</span><strong>${hasEnd?money(r.end):"待填写"}</strong></div><div class="item"><span>公积金</span><strong>${money(r.fund)}</strong></div><div class="item"><span>增加金额</span><strong class="${cls}">${diffText}</strong></div><div class="item"><span>增长率</span><strong class="${cls}">${rtxt}</strong></div></div>${r.note?`<div class="note">${esc(r.note)}</div>`:""}`;$("records").appendChild(a)});
+const list=[...state.records].sort((a,b)=>b.month.localeCompare(a.month));$("records").innerHTML="";$("clearBtn").classList.toggle("hidden",!list.length);if(!list.length){drawTrendChart();$("records").innerHTML='<div class="card empty">还没有月度记录。<br>填写上方表单后，这里会生成月度汇总记录。</div>';return}
+const table=document.createElement("div");table.className="recordTableWrap";
+table.innerHTML=`<table class="recordTable"><thead><tr>
+<th>月份</th><th>月初储蓄</th><th>月末储蓄</th><th>公积金</th><th>变化</th><th>涨跌幅</th><th>状态</th><th>操作</th>
+</tr></thead><tbody></tbody></table>`;
+const tbody=table.querySelector("tbody");
+list.forEach(r=>{
+  const hasEnd=r.end!==null&&r.end!==undefined&&r.end!=="";
+  const diff=hasEnd?Number(r.end)-Number(r.start):null;
+  const rt=hasEnd&&Number(r.start)>0?diff/Number(r.start)*100:null;
+  const sign=diff!==null&&diff>0?"+":"";
+  const cls=diff===null?"neu":diff>0?"pos":diff<0?"neg":"neu";
+  const tr=document.createElement("tr");
+  tr.innerHTML=`<td><strong>${monthText(r.month)}</strong></td>
+  <td>${money(r.start)}</td>
+  <td>${hasEnd?money(r.end):"—"}</td>
+  <td>${money(r.fund)}</td>
+  <td class="${cls}">${hasEnd?`${sign}${money(diff)}`:"—"}</td>
+  <td class="${cls}">${hasEnd&&rt!==null?`${sign}${rt.toFixed(2)}%`:"—"}</td>
+  <td><span class="statusPill ${hasEnd?"done":"running"}">${hasEnd?"已完成":"进行中"}</span></td>
+  <td><div class="tableActions"><button class="tableAction" data-edit="${r.month}">编辑</button><button class="tableAction delete" data-del="${r.month}">删除</button></div></td>`;
+  tbody.appendChild(tr);
+});
+$("records").appendChild(table);
 drawTrendChart();
 document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>edit(b.dataset.edit));document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>remove(b.dataset.del))}
 function reset(){$("form").reset();state.editing=null;$("formTitle").textContent="新增月度记录";$("saveBtn").textContent="保存记录";$("cancelBtn").classList.add("hidden");setDefaultMonth()}
@@ -250,6 +324,19 @@ $("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value
 $("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"财富仪表盘",version:2.1,target:state.target,records:state.records,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`财富仪表盘备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
 $("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:optionalNum(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
 $("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});$("yearSelect").addEventListener("change",renderYearSummary);
+
+document.querySelectorAll(".sectionHead h2").forEach(h=>{
+  const t=h.textContent.trim();
+  let ic="";
+  if(t.includes("本月状态")) ic=ICONS.calendar;
+  else if(t.includes("年度汇总")) ic=ICONS.chart;
+  else if(t.includes("月度趋势")) ic=ICONS.chart;
+  else if(t.includes("月度记录")) ic=ICONS.wallet;
+  else if(t.includes("新增月度记录")||t.includes("编辑")) ic=ICONS.edit;
+  if(ic && !h.querySelector("svg")) h.innerHTML=ic+h.innerHTML;
+  h.classList.add("sectionTitle");
+});
+
 $("trendChart").addEventListener("click",e=>{const c=$("trendChart"),rows=c._chartRows;if(!rows||!rows.length)return;const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left;let idx=0,best=Infinity;rows.forEach((r,i)=>{const xx=c._chartX(i),d=Math.abs(xx-mx);if(d<best){best=d;idx=i}});const r=rows[idx],has=r.end!==null&&r.end!==undefined&&r.end!=="",cur=effectiveValue(r),tip=$("chartTip");tip.innerHTML=`<strong>${monthText(r.month)}</strong><br>月初　${money(r.start)}<br>月末　${has?money(r.end):"待填写"}<br>当前　<strong>${money(cur)}</strong>${has?"":"<br><span style='color:#e98524'>进行中</span>"}`;tip.style.left=Math.max(6,Math.min(rect.width-150,c._chartX(idx)-65))+"px";tip.style.top="35px";tip.classList.add("show")});
 load();setDefaultMonth();render();
 </script></body></html>
