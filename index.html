@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f6f9f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="财富仪表盘">
-<title>财富仪表盘 · V2.5</title>
+<title>财富仪表盘 · V2.6</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="favicon-32.png">
@@ -335,16 +335,97 @@ input,textarea,.yearSelect{background:#fbfdfc}
 
 /* V2.5 */
 .speedCard{padding:18px}.speedTop{display:flex;justify-content:space-between;gap:14px}.speedValue{font-size:34px;font-weight:820;color:#176b52;margin-top:5px}.speedEta{background:#f2f8f5;border:1px solid #e5efea;border-radius:14px;padding:12px 14px;min-width:150px;font-size:13px;line-height:1.6;color:#365d50}.speedMonths{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}.speedMonth{background:#f3f9f6;border-radius:13px;padding:11px 8px;text-align:center}.speedMonth span{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.speedMonth strong{font-size:16px}.goalRow{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;margin-top:17px;padding:13px;border:1px solid rgba(255,255,255,.16);border-radius:15px;background:rgba(255,255,255,.04)}.goalHistoryBtn{border:0;background:rgba(255,255,255,.1);color:white;border-radius:12px;padding:10px 12px;font-weight:750}.goalRecordMini{font-size:12px;color:rgba(255,255,255,.72);margin-top:4px}.annualHighlights{display:grid;grid-template-columns:repeat(3,1fr);margin-top:14px;border:1px solid var(--line);border-radius:15px;overflow:hidden}.annualHighlight{padding:13px 9px;text-align:center;background:#fff}.annualHighlight+.annualHighlight{border-left:1px solid var(--line)}.annualHighlight span{display:block;color:var(--muted);font-size:11px;margin:5px 0}.annualHighlight strong{font-size:15px}.annualExtra{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.annualExtraItem{padding:13px;border-radius:14px;background:#f5f9f7;border:1px solid #e8f0ec}.annualExtraItem strong{font-size:17px;color:#176b52}.goalModalList{display:grid;gap:9px;max-height:48vh;overflow:auto;margin:14px 0}.goalHistoryItem{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fbfdfc}.goalHistoryTop{display:flex;justify-content:space-between;font-weight:800}.goalHistoryMeta{font-size:12px;color:var(--muted);margin-top:5px}.goalDone{color:#177f5f}.goalCurrent{color:#ef7417}.chartPrimaryNote{font-size:12px;color:var(--muted);margin-top:7px}.legendDot.start{background:#176b52!important}.legendDot.end{background:#b7d9cc!important}@media(max-width:520px){.speedTop{display:block}.speedEta{margin-top:12px}.annualHighlights{grid-template-columns:1fr}.annualHighlight+.annualHighlight{border-left:0;border-top:1px solid var(--line)}.annualExtra{grid-template-columns:1fr}}
+
+/* V2.6 — Demo-aligned refinement */
+.heroTopLine{display:flex;align-items:center;gap:10px}
+.heroTopLine .iconBadge{background:rgba(255,255,255,.11);color:#fff}
+.heroTopLine .iconBadge .icon{width:19px;height:19px}
+.heroInfoGrid{display:grid;grid-template-columns:repeat(3,1fr);margin-top:18px;padding-top:17px;border-top:1px solid rgba(255,255,255,.18)}
+.heroInfoItem{padding:0 14px;min-width:0}
+.heroInfoItem:first-child{padding-left:0}
+.heroInfoItem+.heroInfoItem{border-left:1px solid rgba(255,255,255,.18)}
+.heroInfoHead{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.78);font-size:12px;margin-bottom:6px}
+.heroInfoHead .iconBadge{width:27px;height:27px;border-radius:8px;background:rgba(255,255,255,.10);color:#fff}
+.heroInfoHead .icon{width:17px;height:17px}
+.heroInfoValue{font-size:22px;font-weight:820;color:#fff;line-height:1.15}
+.heroInfoSub{font-size:11px;color:rgba(255,255,255,.66);margin-top:5px;line-height:1.45}
+.heroInfoLink{border:0;background:transparent;color:#fff;padding:0;font:inherit;text-align:left}
+.hero .goalRow,.heroBottom{display:none!important}
+
+/* Annual card structure */
+.yearCard{padding:18px}
+.yearCoreGrid{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);padding-bottom:14px}
+.yearCoreItem{padding:0 12px}
+.yearCoreItem:first-child{padding-left:0}.yearCoreItem+.yearCoreItem{border-left:1px solid var(--line)}
+.yearCoreItem .label{margin-bottom:6px}
+.yearCoreValue{font-size:21px;font-weight:820}
+.yearHighlightsRow{display:grid;grid-template-columns:repeat(3,1fr);margin-top:14px;background:#fff9f4;border-radius:15px;overflow:hidden;border:1px solid #f6eee8}
+.yearHighlightItem{padding:14px 12px;display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:start}
+.yearHighlightItem+.yearHighlightItem{border-left:1px solid #f2e7de}
+.yearHighlightIcon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#fff;color:#176b52}
+.yearHighlightIcon.orange{color:#ef7417}
+.yearHighlightIcon .icon{width:19px;height:19px}
+.yearHighlightLabel{font-size:11px;color:var(--muted);margin-bottom:4px}
+.yearHighlightValue{font-size:16px;font-weight:820}
+.yearHighlightSub{font-size:12px;color:#5f6f68;margin-top:2px}
+.yearSubCards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.yearSubCard{padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:#f7faf8;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.yearSubIcon{width:34px;height:34px;border-radius:10px;background:#edf7f3;display:flex;align-items:center;justify-content:center;color:#176b52}
+.yearSubIcon .icon{width:20px;height:20px}
+.yearSubTitle{font-size:12px;color:var(--muted)}
+.yearSubMain{font-size:16px;font-weight:820;color:#176b52;margin-top:2px}
+.yearSubArrow{color:#8a9891;font-size:18px}
+.yearOldGrid,.annualHighlights,.annualExtra{display:none!important}
+
+/* record table monthly change semantics */
+.recordTable th:nth-child(5)::after{content:"（月初→下月月初）";display:block;font-size:10px;font-weight:500;color:#9aa6a0;margin-top:2px}
+.recordTable td:nth-child(5).pos{color:#177f5f}
+.recordTable td:nth-child(5).neg{color:#ef7417}
+
+/* trend note */
+.chartPrimaryNote{background:#f7faf8;border:1px solid #edf2ef;border-radius:11px;padding:9px 10px}
+
+/* icon fidelity */
+.iconBadge{box-shadow:none}
+@media(max-width:620px){
+ .heroInfoGrid{grid-template-columns:repeat(3,1fr)}
+ .heroInfoItem{padding:0 8px}
+ .heroInfoValue{font-size:19px}
+ .yearCoreGrid{grid-template-columns:repeat(2,1fr);gap:14px 0}
+ .yearCoreItem:nth-child(3){border-left:0;padding-left:0}
+ .yearCoreItem:nth-child(n+3){padding-top:12px;border-top:1px solid var(--line)}
+ .yearHighlightsRow{grid-template-columns:1fr}
+ .yearHighlightItem+.yearHighlightItem{border-left:0;border-top:1px solid #f2e7de}
+ .yearSubCards{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
 <div class="wrap">
 <header><div><h1>财富仪表盘</h1><div class="sub">所有原始金额均由你手动填写，月末金额可后补</div></div><div class="updated" id="updated">尚未更新</div></header>
 <div class="hero">
-<div class="label">当前储蓄</div><div class="heroValue" id="currentValue">0</div>
+<div class="heroTopLine"><span id="heroCoinsIcon"></span><div class="label">当前储蓄</div></div>
+<div class="heroValue" id="currentValue">0</div>
 <div class="heroMeta"><span>距离目标 <strong id="remainingValue">0</strong></span><span>·</span><span>完成 <strong id="rate">0%</strong></span></div>
 <div class="bar"><span id="bar"></span></div>
-<div class="heroBottom"><div><div class="label">储蓄目标 · 点击设置</div><button class="targetBtn" id="openTarget"><div class="heroSmall" id="targetValue">0</div></button></div><div><div class="label">公积金</div><div class="heroSmall" id="fundValue">0</div></div></div><div class="goalRow"><div><div class="label">当前阶段目标</div><div class="heroSmall" id="stageGoalValue">0</div><div class="goalRecordMini" id="goalMini">尚无已达成目标</div></div><button class="goalHistoryBtn" id="openGoalHistory">目标记录 ›</button></div>
+<div class="heroInfoGrid">
+  <div class="heroInfoItem">
+    <div class="heroInfoHead"><span id="heroFlagIcon"></span><span>当前阶段目标</span></div>
+    <button class="heroInfoLink" id="openTarget"><div class="heroInfoValue" id="targetValue">0</div></button>
+    <div class="heroInfoSub">点击设置 / 更新目标</div>
+  </div>
+  <div class="heroInfoItem">
+    <div class="heroInfoHead"><span id="heroTrophyIcon"></span><span>已达成目标</span></div>
+    <button class="heroInfoLink" id="openGoalHistory"><div class="heroInfoValue" id="goalDoneCount">0 个</div></button>
+    <div class="heroInfoSub" id="goalLatestDone">尚无记录</div>
+  </div>
+  <div class="heroInfoItem">
+    <div class="heroInfoHead"><span id="heroFundIcon"></span><span>公积金</span></div>
+    <div class="heroInfoValue" id="fundValue">0</div>
+    <div class="heroInfoSub">账户总余额</div>
+  </div>
+</div>
 <div class="hidden" id="remainingHint"></div>
 </div>
 <section><div class="sectionHead"><h2>本月状态</h2></div>
@@ -352,13 +433,27 @@ input,textarea,.yearSelect{background:#fbfdfc}
 <div class="monthMain"><div class="label">当前储蓄</div><div class="monthCurrent" id="monthCurrentValue">—</div></div>
 <div class="monthSplit"><div><div class="label">月初储蓄</div><div class="monthMinor" id="monthStartValue">—</div></div><div><div class="label">月内变化</div><div class="monthMinor" id="monthChangeValue">—</div></div></div>
 <div class="monthNote" id="monthStatusHint">新增本月记录后显示</div></div></section>
-<section><div class="sectionHead"><h2>储蓄速度</h2></div><div class="card speedCard"><div class="speedTop"><div><div class="label">近3次月初储蓄变化平均</div><div class="speedValue" id="speedValue">—</div></div><div class="speedEta" id="speedEta">至少需要连续4个月的月初储蓄数据</div></div><div class="label" style="margin-top:15px">最近3次月度变化</div><div class="speedMonths" id="speedMonths"></div></div></section><section><div class="sectionHead"><h2>年度储蓄</h2></div><div class="card yearCard"><div class="yearHead"><div class="chartTitle" id="yearTitle">年度储蓄概览</div><select class="yearSelect" id="yearSelect"></select></div><div class="yearGrid">
-<div class="yearItem"><div class="label">年初储蓄</div><div class="yearValue" id="yearStart">—</div></div>
-<div class="yearItem"><div class="label">当前储蓄</div><div class="yearValue" id="yearCurrent">—</div></div>
-<div class="yearItem"><div class="label">年内净增加</div><div class="yearValue" id="yearChange">—</div></div>
-<div class="yearItem"><div class="label">年内最高</div><div class="yearValue" id="yearHigh">—</div></div>
-<div class="yearItem"><div class="label">全年增长率</div><div class="yearValue" id="yearRemaining">—</div></div>
-</div><div class="annualHighlights"><div class="annualHighlight"><div>🏆</div><span>储蓄最高月份</span><strong id="yearHighMonth">—</strong></div><div class="annualHighlight"><div>↗</div><span>单月增加最多</span><strong id="yearBestMonth">—</strong></div><div class="annualHighlight"><div>↘</div><span>单月下降最多</span><strong id="yearWorstMonth">—</strong></div></div><div class="annualExtra"><div class="annualExtraItem"><div class="label">公积金年内增加</div><strong id="yearFundChange">—</strong></div><div class="annualExtraItem"><div class="label">目标完成情况</div><strong id="yearGoalStatus">—</strong></div></div></div></section><section><div class="sectionHead"><h2 id="formTitle">新增月度记录</h2><div class="actions"><button class="btn" id="exportBtn">导出数据</button><button class="btn" id="importBtn">导入数据</button><input class="hidden" type="file" id="fileInput" accept=".json,application/json"></div></div>
+<section><div class="sectionHead"><h2>储蓄速度</h2></div><div class="card speedCard"><div class="speedTop"><div><div class="label">近3次月初储蓄变化平均</div><div class="speedValue" id="speedValue">—</div></div><div class="speedEta" id="speedEta">至少需要连续4个月的月初储蓄数据</div></div><div class="label" style="margin-top:15px">最近3次月度变化</div><div class="speedMonths" id="speedMonths"></div></div></section><section><div class="sectionHead"><h2>年度储蓄</h2></div>
+<div class="card yearCard">
+  <div class="yearHead"><div class="chartTitle" id="yearTitle">年度储蓄概览 · 2026</div><select class="yearSelect" id="yearSelect"></select></div>
+  <div class="yearCoreGrid">
+    <div class="yearCoreItem"><div class="label">年初储蓄</div><div class="yearCoreValue" id="yearStart">—</div></div>
+    <div class="yearCoreItem"><div class="label">当前储蓄</div><div class="yearCoreValue" id="yearCurrent">—</div></div>
+    <div class="yearCoreItem"><div class="label">年内净增加</div><div class="yearCoreValue" id="yearChange">—</div></div>
+    <div class="yearCoreItem"><div class="label">全年增长率</div><div class="yearCoreValue" id="yearRemaining">—</div></div>
+  </div>
+  <div class="yearHighlightsRow">
+    <div class="yearHighlightItem"><span id="yearTrophyIcon"></span><div><div class="yearHighlightLabel">储蓄最高月份</div><div class="yearHighlightValue" id="yearHighMonth">—</div><div class="yearHighlightSub" id="yearHigh">—</div></div></div>
+    <div class="yearHighlightItem"><span id="yearUpIcon"></span><div><div class="yearHighlightLabel">单月增加最多</div><div class="yearHighlightValue" id="yearBestMonth">—</div><div class="yearHighlightSub" id="yearBestValue">—</div></div></div>
+    <div class="yearHighlightItem"><span id="yearDownIcon"></span><div><div class="yearHighlightLabel">单月下降最多</div><div class="yearHighlightValue" id="yearWorstMonth">—</div><div class="yearHighlightSub" id="yearWorstValue">—</div></div></div>
+  </div>
+  <div class="yearSubCards">
+    <div class="yearSubCard"><div class="yearSubIcon" id="yearFundIcon"></div><div><div class="yearSubTitle">公积金（账户余额）</div><div class="yearSubMain" id="yearFundChange">—</div><div class="yearSubTitle" id="yearFundDetail">年初 — · 当前 —</div></div><div class="yearSubArrow">›</div></div>
+    <div class="yearSubCard"><div class="yearSubIcon" id="yearGoalIcon"></div><div><div class="yearSubTitle">目标完成情况</div><div class="yearSubMain" id="yearGoalStatus">—</div><div class="yearSubTitle" id="yearGoalDetail">—</div></div><div class="yearSubArrow">›</div></div>
+  </div>
+</div></section>
+<section>
+<div class="sectionHead"><h2 id="formTitle">新增月度记录</h2><div class="actions"><button class="btn" id="exportBtn">导出数据</button><button class="btn" id="importBtn">导入数据</button><input class="hidden" type="file" id="fileInput" accept=".json,application/json"></div></div>
 <form class="card form" id="form">
 <div class="fields">
 <div><label for="month">月份</label><input type="month" id="month" required></div>
@@ -399,16 +494,21 @@ const KEY="wealth_dashboard_v1",state={target:0,records:[],updatedAt:null,editin
 const money=n=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Number(n)||0),optionalNum=v=>{if(v===""||v===null||v===undefined)return null;const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},monthText=m=>{const[y,mm]=m.split("-");return`${y}年${Number(mm)}月`},num=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>$("toast").classList.remove("show"),1800)}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[]}catch(e){toast("本地数据读取失败")}}
-function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.5,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
+function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.6,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
 function latest(){return[...state.records].sort((a,b)=>b.month.localeCompare(a.month))[0]||null}
 
 const ICONS={
+  coins:`<span class="iconBadge"><svg class="icon" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7" ry="3"/><path d="M5 5.5v4c0 1.7 3.1 3 7 3s7-1.3 7-3v-4"/><path d="M5 9.5v4c0 1.7 3.1 3 7 3s7-1.3 7-3v-4"/><path d="M5 13.5v4c0 1.7 3.1 3 7 3s7-1.3 7-3v-4"/></svg></span>`,
+  flag:`<span class="iconBadge"><svg class="icon" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M6 5h10l-2.2 3L16 11H6"/></svg></span>`,
+  trophy:`<span class="iconBadge"><svg class="icon" viewBox="0 0 24 24"><path d="M8 4h8v4a4 4 0 0 1-8 0z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 12v4M8.5 20h7M10 16h4"/></svg></span>`,
   calendar:`<span class="iconBadge"><svg class="icon" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01"/></svg></span>`,
   annual:`<span class="iconBadge"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V13h3v6M10.5 19V9h3v10M17 19V5h3v14"/><path d="M3 20.5h18"/><path d="M5 9.5l4-3 4 1.5 5-4"/></svg></span>`,
   add:`<span class="iconBadge"><svg class="icon" viewBox="0 0 24 24"><path d="M6 3.5h8l4 4V20a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 5 20V5a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M14 3.5V8h4.5M9 13h6M12 10v6"/></svg></span>`,
-  trend:`<span class="iconBadge"><svg class="icon" viewBox="0 0 24 24"><path d="M4 17l5-5 4 3 7-8"/><path d="M15 7h5v5"/><circle cx="4" cy="17" r=".7"/><circle cx="9" cy="12" r=".7"/><circle cx="13" cy="15" r=".7"/></svg></span>`,
+  trend:`<span class="iconBadge"><svg class="icon" viewBox="0 0 24 24"><path d="M4 17l5-5 4 3 7-8"/><path d="M15 7h5v5"/><circle cx="4" cy="17" r=".8"/><circle cx="9" cy="12" r=".8"/><circle cx="13" cy="15" r=".8"/></svg></span>`,
+  records:`<span class="iconBadge"><svg class="icon" viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 5 20V5a1.5 1.5 0 0 1 1-1.5z"/><path d="M15 3.5V7h3.5M8.5 11h7M8.5 14.5h7M8.5 18h5"/></svg></span>`,
   rocket:`<span class="iconBadge"><svg class="icon" viewBox="0 0 24 24"><path d="M14.5 5.5c2.1-2.1 4.8-2.6 6-2.5.1 1.2-.4 3.9-2.5 6l-5.8 5.8-3-3z"/><circle cx="16.4" cy="7.1" r="1.4"/><path d="M9.2 11.8l-3.8.7-2.1 2.1 4.2.6M12.2 14.8l-.7 3.8-2.1 2.1-.6-4.2M5.2 18.8l-2 2"/></svg></span>`,
-  records:`<span class="iconBadge"><svg class="icon" viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 5 20V5a1.5 1.5 0 0 1 1-1.5z"/><path d="M15 3.5V7h3.5M8.5 11h7M8.5 14.5h7M8.5 18h5"/></svg></span>`
+  up:`<span class="yearHighlightIcon"><svg class="icon" viewBox="0 0 24 24"><path d="M5 17L17 5"/><path d="M9 5h8v8"/></svg></span>`,
+  down:`<span class="yearHighlightIcon orange"><svg class="icon" viewBox="0 0 24 24"><path d="M5 7l12 12"/><path d="M9 19h8v-8"/></svg></span>`
 };
 
 function effectiveValue(r){return r?(r.end===null||r.end===undefined||r.end===""?Number(r.start):Number(r.end)):0}
@@ -418,10 +518,48 @@ function renderMonthStatus(){const key=currentMonthKey(),r=state.records.find(x=
 function startRows(year=null){return [...state.records].filter(r=>!year||r.month.startsWith(year+"-")).sort((a,b)=>a.month.localeCompare(b.month))}
 function startChanges(rows){const a=[];for(let i=1;i<rows.length;i++)a.push({month:rows[i].month,value:Number(rows[i].start)-Number(rows[i-1].start)});return a}
 function renderSpeed(){const c=startChanges(startRows()).slice(-3),box=$("speedMonths");box.innerHTML="";if(c.length<3){$("speedValue").textContent="—";$("speedEta").textContent="至少需要连续4个月的月初储蓄数据"}else{const avg=c.reduce((s,x)=>s+x.value,0)/3;$("speedValue").textContent=`${avg>0?"+":""}${money(avg)} / 月`;const r=latest(),cur=r?effectiveValue(r):0,remain=Math.max(state.target-cur,0);$("speedEta").innerHTML=!state.target?"设置阶段目标后可估算达标时间":remain<=0?"当前阶段目标已经达到":avg>0?`按照当前速度<br><strong>预计约 ${Math.ceil(remain/avg)} 个月</strong><br>达到 ${money(state.target)}`:"近3次平均增长未为正，暂不估算"}c.forEach(x=>{const d=document.createElement("div");d.className="speedMonth";d.innerHTML=`<span>${monthText(x.month)}</span><strong class="${x.value>0?"pos":x.value<0?"neg":"neu"}">${x.value>0?"+":""}${money(x.value)}</strong>`;box.appendChild(d)})}
-function renderGoalHistory(){const done=state.goalHistory||[];$("stageGoalValue").textContent=state.target?money(state.target):"未设置";$("goalMini").textContent=done.length?`已达成 ${done.length} 个目标`:"尚无已达成目标";const box=$("goalHistoryList");box.innerHTML="";const rows=[];if(state.target)rows.push({amount:state.target,current:true});[...done].reverse().forEach(g=>rows.push(g));if(!rows.length){box.innerHTML='<div class="empty">还没有目标记录</div>';return}rows.forEach(g=>{const d=document.createElement("div");d.className="goalHistoryItem";d.innerHTML=`<div class="goalHistoryTop"><span>${money(g.amount)}</span><span class="${g.current?"goalCurrent":"goalDone"}">${g.current?"当前目标":"✓ 已达成"}</span></div><div class="goalHistoryMeta">${g.current?"继续积累中":`达成日期：${g.achievedAt||"—"} · 达成时储蓄 ${money(g.achievedValue)}`}</div>`;box.appendChild(d)})}
+function renderGoalHistory(){
+ const done=state.goalHistory||[];
+ if($("goalDoneCount"))$("goalDoneCount").textContent=`${done.length} 个`;
+ if($("goalLatestDone"))$("goalLatestDone").textContent=done.length?`最近：${money(done.at(-1).amount)}`:"尚无记录";
+ const box=$("goalHistoryList");box.innerHTML="";
+ const rows=[];if(state.target)rows.push({amount:state.target,current:true});[...done].reverse().forEach(g=>rows.push(g));
+ if(!rows.length){box.innerHTML='<div class="empty">还没有目标记录</div>';return}
+ rows.forEach(g=>{const d=document.createElement("div");d.className="goalHistoryItem";d.innerHTML=`<div class="goalHistoryTop"><span>${money(g.amount)}</span><span class="${g.current?"goalCurrent":"goalDone"}">${g.current?"当前目标":"✓ 已达成"}</span></div><div class="goalHistoryMeta">${g.current?"继续积累中":`达成日期：${g.achievedAt||"—"} · 达成时储蓄 ${money(g.achievedValue)}`}</div>`;box.appendChild(d)})
+}
 function archiveReachedGoal(){if(!state.target)return;const r=latest();if(!r)return;const cur=effectiveValue(r);if(cur<state.target)return;const exists=(state.goalHistory||[]).some(g=>Number(g.amount)===Number(state.target));if(!exists){state.goalHistory.push({amount:Number(state.target),achievedAt:new Date().toISOString().slice(0,10),achievedValue:cur});save()}}
 function renderYearOptions(){const s=$("yearSelect"),ys=[...new Set(state.records.map(r=>r.month.slice(0,4)))].sort((a,b)=>b.localeCompare(a)),now=String(new Date().getFullYear()),old=s.value,opts=ys.length?ys:[now];s.innerHTML=opts.map(y=>`<option value="${y}">${y}年</option>`).join("");s.value=opts.includes(old)?old:(opts.includes(now)?now:opts[0]);renderYearSummary()}
-function renderYearSummary(){const y=$("yearSelect").value,rows=startRows(y);$("yearTitle").textContent=`年度储蓄概览 · ${y}`;if(!rows.length){["yearStart","yearCurrent","yearChange","yearHigh","yearRemaining","yearHighMonth","yearBestMonth","yearWorstMonth","yearFundChange","yearGoalStatus"].forEach(id=>$(id).textContent="—");return}const start=Number(rows[0].start),cur=Number(rows.at(-1).start),chg=cur-start,growth=start>0?chg/start*100:null,high=rows.reduce((a,b)=>Number(b.start)>Number(a.start)?b:a),cs=startChanges(rows),best=cs.length?cs.reduce((a,b)=>b.value>a.value?b:a):null,worst=cs.length?cs.reduce((a,b)=>b.value<a.value?b:a):null,fund=Number(rows.at(-1).fund)-Number(rows[0].fund);$("yearStart").textContent=money(start);$("yearCurrent").textContent=money(cur);$("yearChange").textContent=`${chg>0?"+":""}${money(chg)}`;$("yearHigh").textContent=money(high.start);$("yearRemaining").textContent=growth===null?"—":`${growth>0?"+":""}${growth.toFixed(1)}%`;$("yearHighMonth").textContent=`${Number(high.month.slice(5))}月 · ${money(high.start)}`;$("yearBestMonth").textContent=best&&best.value>0?`${Number(best.month.slice(5))}月 · +${money(best.value)}`:"暂无增加";$("yearWorstMonth").textContent=worst&&worst.value<0?`${Number(worst.month.slice(5))}月 · ${money(worst.value)}`:"暂无下降";$("yearFundChange").textContent=`${fund>0?"+":""}${money(fund)}`;const done=(state.goalHistory||[]).filter(g=>(g.achievedAt||"").startsWith(y)).length;$("yearGoalStatus").textContent=done?`已达成 ${done} 个目标`:(state.target?"当前目标进行中":"尚未设置目标")}
+function renderYearSummary(){
+ const y=$("yearSelect").value,rows=startRows(y);
+ $("yearTitle").textContent=`年度储蓄概览 · ${y}`;
+ if(!rows.length){
+  ["yearStart","yearCurrent","yearChange","yearRemaining","yearHighMonth","yearHigh","yearBestMonth","yearBestValue","yearWorstMonth","yearWorstValue","yearFundChange","yearFundDetail","yearGoalStatus","yearGoalDetail"].forEach(id=>$(id).textContent="—");
+  return;
+ }
+ const start=Number(rows[0].start),cur=Number(rows.at(-1).start),chg=cur-start,growth=start>0?chg/start*100:null;
+ const high=rows.reduce((a,b)=>Number(b.start)>Number(a.start)?b:a);
+ const cs=startChanges(rows);
+ const best=cs.length?cs.reduce((a,b)=>b.value>a.value?b:a):null;
+ const worst=cs.length?cs.reduce((a,b)=>b.value<a.value?b:a):null;
+ const fundStart=Number(rows[0].fund)||0,fundCur=Number(rows.at(-1).fund)||0,fundChange=fundCur-fundStart;
+ $("yearStart").textContent=money(start);
+ $("yearCurrent").textContent=money(cur);
+ $("yearChange").textContent=`${chg>0?"+":""}${money(chg)}`;
+ $("yearChange").className=`yearCoreValue ${chg>0?"pos":chg<0?"neg":"neu"}`;
+ $("yearRemaining").textContent=growth===null?"—":`${growth>0?"+":""}${growth.toFixed(1)}%`;
+ $("yearRemaining").style.color=growth!==null&&growth>0?"#ef7417":"";
+ $("yearHighMonth").textContent=`${Number(high.month.slice(5))}月`;
+ $("yearHigh").textContent=money(high.start);
+ if(best&&best.value>0){$("yearBestMonth").textContent=`${Number(best.month.slice(5))}月`;$("yearBestValue").textContent=`+${money(best.value)}`;$("yearBestValue").className="yearHighlightSub pos"}
+ else{$("yearBestMonth").textContent="暂无增加";$("yearBestValue").textContent="—";$("yearBestValue").className="yearHighlightSub"}
+ if(worst&&worst.value<0){$("yearWorstMonth").textContent=`${Number(worst.month.slice(5))}月`;$("yearWorstValue").textContent=money(worst.value);$("yearWorstValue").style.color="#ef7417"}
+ else{$("yearWorstMonth").textContent="暂无下降";$("yearWorstValue").textContent="—";$("yearWorstValue").style.color=""}
+ $("yearFundChange").textContent=`年内增加 ${fundChange>0?"+":""}${money(fundChange)}`;
+ $("yearFundDetail").textContent=`年初 ${money(fundStart)} · 当前 ${money(fundCur)}`;
+ const done=(state.goalHistory||[]).filter(g=>(g.achievedAt||"").startsWith(y));
+ $("yearGoalStatus").textContent=done.length?`已达成 ${done.length} 个目标`:(state.target?"当前目标进行中":"尚未设置目标");
+ $("yearGoalDetail").textContent=done.length?`最近达成 ${money(done.at(-1).amount)}`:(state.target?`当前目标 ${money(state.target)}`:"—");
+}
 function setDefaultMonth(){if(!state.editing)$("month").value=currentMonthKey()}
 
 
@@ -512,7 +650,18 @@ $("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num
 $("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value=state.target||"";$("modal").classList.add("open")};$("closeModal").onclick=()=>$("modal").classList.remove("open");$("saveTarget").onclick=()=>{const v=num($("targetInput").value);if(v===null)return toast("请输入有效目标金额");state.target=v;save();render();$("modal").classList.remove("open");toast("目标已保存")};$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("open")};
 $("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"财富仪表盘",version:2.4,target:state.target,records:state.records,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`财富仪表盘备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
 $("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:optionalNum(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
-$("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});$("yearSelect").addEventListener("change",renderYearSummary);$("openGoalHistory").onclick=()=>{$("goalHistoryModal").classList.add("open");renderGoalHistory()};$("closeGoalHistory").onclick=()=>$("goalHistoryModal").classList.remove("open");$("goalHistoryModal").addEventListener("click",e=>{if(e.target===$("goalHistoryModal"))$("goalHistoryModal").classList.remove("open")});
+$("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});$("yearSelect").addEventListener("change",renderYearSummary);
+
+$("heroCoinsIcon").innerHTML=ICONS.coins;
+$("heroFlagIcon").innerHTML=ICONS.flag;
+$("heroTrophyIcon").innerHTML=ICONS.trophy;
+$("heroFundIcon").innerHTML=ICONS.coins;
+$("yearTrophyIcon").innerHTML=ICONS.trophy;
+$("yearUpIcon").innerHTML=ICONS.up;
+$("yearDownIcon").innerHTML=ICONS.down;
+$("yearFundIcon").innerHTML=ICONS.coins;
+$("yearGoalIcon").innerHTML=ICONS.flag;
+$("openGoalHistory").onclick=()=>{$("goalHistoryModal").classList.add("open");renderGoalHistory()};$("closeGoalHistory").onclick=()=>$("goalHistoryModal").classList.remove("open");$("goalHistoryModal").addEventListener("click",e=>{if(e.target===$("goalHistoryModal"))$("goalHistoryModal").classList.remove("open")});
 
 document.querySelectorAll(".sectionHead h2").forEach(h=>{
   const t=h.textContent.trim();
