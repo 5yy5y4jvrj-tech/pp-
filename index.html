@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f6f9f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="财富仪表盘">
-<title>财富仪表盘 · V2.6</title>
+<title>财富仪表盘 · V2.7</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="favicon-32.png">
@@ -378,7 +378,7 @@ input,textarea,.yearSelect{background:#fbfdfc}
 .yearOldGrid,.annualHighlights,.annualExtra{display:none!important}
 
 /* record table monthly change semantics */
-.recordTable th:nth-child(5)::after{content:"（月初→下月月初）";display:block;font-size:10px;font-weight:500;color:#9aa6a0;margin-top:2px}
+.recordTable th:nth-child(5)::after{content:""}
 .recordTable td:nth-child(5).pos{color:#177f5f}
 .recordTable td:nth-child(5).neg{color:#ef7417}
 
@@ -398,6 +398,39 @@ input,textarea,.yearSelect{background:#fbfdfc}
  .yearHighlightItem+.yearHighlightItem{border-left:0;border-top:1px solid #f2e7de}
  .yearSubCards{grid-template-columns:1fr}
 }
+
+
+/* V2.7 — mobile annual row + table semantics */
+@media(max-width:620px){
+  .yearHighlightsRow{
+    grid-template-columns:repeat(3,1fr)!important;
+  }
+  .yearHighlightItem{
+    grid-template-columns:1fr;
+    gap:6px;
+    padding:11px 8px;
+    text-align:center;
+    justify-items:center;
+  }
+  .yearHighlightItem+.yearHighlightItem{
+    border-top:0!important;
+    border-left:1px solid #f2e7de!important;
+  }
+  .yearHighlightIcon{
+    width:28px;height:28px;
+  }
+  .yearHighlightLabel{font-size:10px;line-height:1.25}
+  .yearHighlightValue{font-size:15px}
+  .yearHighlightSub{font-size:11px}
+}
+.recordTable th .thSub{
+  display:block;
+  margin-top:2px;
+  color:#9aa6a0;
+  font-size:10px;
+  font-weight:500;
+}
+.recordTable td.consume{color:#ef7417}
 
 </style>
 </head>
@@ -473,8 +506,8 @@ input,textarea,.yearSelect{background:#fbfdfc}
     <div class="chartHead">
       <div class="chartTitle">月初与月末储蓄对比</div>
       <div class="legend">
-        <span class="legendItem"><i class="legendDot start"></i>月初储蓄</span>
-        <span class="legendItem"><i class="legendDot end"></i>月末储蓄</span>
+        <span class="legendItem"><i class="legendDot start"></i>月初储蓄（财富主趋势）</span>
+        <span class="legendItem"><i class="legendDot end"></i>月末储蓄（月内状态）</span>
       </div>
     </div>
     <div class="chartWrap" id="chartWrap">
@@ -494,7 +527,7 @@ const KEY="wealth_dashboard_v1",state={target:0,records:[],updatedAt:null,editin
 const money=n=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Number(n)||0),optionalNum=v=>{if(v===""||v===null||v===undefined)return null;const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},monthText=m=>{const[y,mm]=m.split("-");return`${y}年${Number(mm)}月`},num=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>$("toast").classList.remove("show"),1800)}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[]}catch(e){toast("本地数据读取失败")}}
-function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.6,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
+function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.7,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
 function latest(){return[...state.records].sort((a,b)=>b.month.localeCompare(a.month))[0]||null}
 
 const ICONS={
@@ -609,9 +642,15 @@ function drawTrendChart(){
       const xx=x(i),yy=y(Number(value));ctx.fillStyle="#fff";ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.arc(xx,yy,4,0,Math.PI*2);ctx.fill();ctx.stroke()
     });
   }
-  line("start","#91bcae");line("end","#176b52");
-  const done=rows.filter(r=>r.end!==null&&r.end!==undefined&&r.end!=="").at(-1);
-  if(done){const d=Number(done.end)-Number(done.start),rt=Number(done.start)>0?d/Number(done.start)*100:0,sg=d>0?"+":"";$("chartSummary").innerHTML=`最近一个已完成月：<strong>${sg}${money(d)} · ${sg}${rt.toFixed(2)}%</strong>　点击数据点查看详情`;}
+  line("start","#176b52");line("end","#b7d9cc");
+  const doneIdx=[...rows].map((r,i)=>({r,i})).filter(x=>x.r.end!==null&&x.r.end!==undefined&&x.r.end!=="").at(-1);
+  if(doneIdx&&doneIdx.i>0){
+    const prev=rows[doneIdx.i-1],done=doneIdx.r;
+    const d=Number(done.start)-Number(prev.start),rt=Number(prev.start)>0?d/Number(prev.start)*100:0,sg=d>0?"+":"";
+    $("chartSummary").innerHTML=`最近一个已完成月财富变化：<strong>${sg}${money(d)} · ${sg}${rt.toFixed(2)}%</strong><br><span style="font-size:12px">按月初储蓄：${monthText(prev.month)} → ${monthText(done.month)}</span>`;
+  }else{
+    $("chartSummary").textContent="至少需要两个连续月份，才能计算最近财富变化";
+  }
   canvas._chartRows=rows;canvas._chartX=x;canvas._chartPad=pad;canvas._chartW=W;
 }
 
@@ -620,22 +659,22 @@ $("targetValue").textContent=money(state.target);$("currentValue").textContent=m
 const list=[...state.records].sort((a,b)=>b.month.localeCompare(a.month));$("records").innerHTML="";$("clearBtn").classList.toggle("hidden",!list.length);if(!list.length){drawTrendChart();$("records").innerHTML='<div class="card empty">还没有月度记录。<br>填写上方表单后，这里会生成月度汇总记录。</div>';return}
 const table=document.createElement("div");table.className="recordTableWrap";
 table.innerHTML=`<table class="recordTable"><thead><tr>
-<th>月份</th><th>月初储蓄</th><th>月末储蓄</th><th>公积金</th><th>变化</th><th>涨跌幅</th><th>状态</th><th>操作</th>
+<th>月份</th><th>月初储蓄</th><th>月末储蓄</th><th>公积金</th><th>变化<span class="thSub">月初－月末</span></th><th>当月消耗<span class="thSub">占月初储蓄</span></th><th>状态</th><th>操作</th>
 </tr></thead><tbody></tbody></table>`;
 const tbody=table.querySelector("tbody");
 list.forEach(r=>{
   const hasEnd=r.end!==null&&r.end!==undefined&&r.end!=="";
-  const diff=hasEnd?Number(r.end)-Number(r.start):null;
+  const diff=hasEnd?Number(r.start)-Number(r.end):null;
   const rt=hasEnd&&Number(r.start)>0?diff/Number(r.start)*100:null;
-  const sign=diff!==null&&diff>0?"+":"";
-  const cls=diff===null?"neu":diff>0?"pos":diff<0?"neg":"neu";
+  const sign=diff!==null&&diff<0?"+":"";
+  const cls=diff===null?"neu":"consume";
   const tr=document.createElement("tr");
   tr.innerHTML=`<td><strong>${monthText(r.month)}</strong></td>
   <td>${money(r.start)}</td>
   <td>${hasEnd?money(r.end):"—"}</td>
   <td>${money(r.fund)}</td>
   <td class="${cls}">${hasEnd?`${sign}${money(diff)}`:"—"}</td>
-  <td class="${cls}">${hasEnd&&rt!==null?`${sign}${rt.toFixed(2)}%`:"—"}</td>
+  <td class="${cls}">${hasEnd&&rt!==null?`${rt.toFixed(2)}%`:"—"}</td>
   <td><span class="statusPill ${hasEnd?"done":"running"}">${hasEnd?"已完成":"进行中"}</span></td>
   <td><div class="tableActions"><button class="tableAction" data-edit="${r.month}">编辑</button><button class="tableAction delete" data-del="${r.month}">删除</button></div></td>`;
   tbody.appendChild(tr);
@@ -648,8 +687,8 @@ function edit(m){const r=state.records.find(x=>x.month===m);if(!r)return;state.e
 function remove(m){if(!confirm(`确认删除 ${monthText(m)} 的记录吗？`))return;state.records=state.records.filter(r=>r.month!==m);if(state.editing===m)reset();save();render();toast("记录已删除")}
 $("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num($("start").value),end=optionalNum($("end").value),fund=num($("fund").value),note=$("note").value.trim();if(!month||start===null||fund===null)return toast("请填写月份、月初储蓄和公积金");if(state.records.some(r=>r.month===month&&r.month!==state.editing))return toast("该月份已存在，请编辑已有记录");const wasEditing=!!state.editing,r={month,start,end,fund,note};state.records=wasEditing?state.records.map(x=>x.month===state.editing?r:x):[...state.records,r];save();reset();render();toast(wasEditing?"记录已更新":"记录已保存")};
 $("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value=state.target||"";$("modal").classList.add("open")};$("closeModal").onclick=()=>$("modal").classList.remove("open");$("saveTarget").onclick=()=>{const v=num($("targetInput").value);if(v===null)return toast("请输入有效目标金额");state.target=v;save();render();$("modal").classList.remove("open");toast("目标已保存")};$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("open")};
-$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"财富仪表盘",version:2.4,target:state.target,records:state.records,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`财富仪表盘备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
-$("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:optionalNum(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
+$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"财富仪表盘",version:2.7,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`财富仪表盘备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
+$("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:optionalNum(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[];save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
 $("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});$("yearSelect").addEventListener("change",renderYearSummary);
 
 $("heroCoinsIcon").innerHTML=ICONS.coins;
@@ -668,9 +707,9 @@ document.querySelectorAll(".sectionHead h2").forEach(h=>{
   let ic="";
   if(t.includes("本月状态")) ic=ICONS.calendar;
   else if(t.includes("储蓄速度")) ic=ICONS.rocket;
-  else if(t.includes("年度汇总")) ic=ICONS.annual;
+  else if(t.includes("年度汇总")||t.includes("年度储蓄")) ic=ICONS.annual;
   else if(t.includes("新增月度记录")||t.includes("编辑月度记录")) ic=ICONS.add;
-  else if(t.includes("月度趋势")) ic=ICONS.trend;
+  else if(t.includes("月度趋势")||t.includes("储蓄趋势")) ic=ICONS.trend;
   else if(t.includes("月度记录")) ic=ICONS.records;
   if(ic && !h.querySelector(".iconBadge")) h.innerHTML=ic+h.innerHTML;
   h.classList.add("sectionTitle");
