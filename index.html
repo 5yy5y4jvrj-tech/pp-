@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f6f9f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="财富仪表盘">
-<title>正在暴富ing · V2.10</title>
+<title>正在暴富ing · V2.11</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="favicon-32.png">
@@ -708,10 +708,24 @@ input[type="month"]:focus{
 
 
 /* V2.10 bugfix + layout tweaks */
-.speedEta strong{color:var(--orange);font-size:24px;line-height:1.15;display:inline-block;margin:2px 0 3px}
-.speedEta .etaLabel,.speedEta .etaTarget{display:block}
-.speedEta .etaLabel{color:#61706a}
-.speedEta .etaTarget{color:#61706a}
+.speedEta{
+  display:flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:3px 5px;
+}
+.speedEta strong{
+  color:var(--orange);
+  font-size:16px;
+  line-height:1.35;
+  font-weight:820;
+  display:inline;
+  margin:0;
+}
+.speedEta .etaLabel,.speedEta .etaTarget{
+  display:inline;
+  color:#61706a;
+}
 .chartSummary{display:grid;gap:6px}
 .chartSummaryMain{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
 .chartSummaryLabel{color:var(--muted)}
@@ -725,8 +739,18 @@ input[type="month"]:focus{
 @media(max-width:640px){
   .speedTop{flex-direction:column;align-items:stretch}
   .speedValue{font-size:30px}
-  .speedEta{min-width:0;padding:12px 14px;line-height:1.45}
-  .speedEta strong{font-size:22px}
+  .speedEta{
+    min-width:0;
+    padding:11px 13px;
+    line-height:1.45;
+    font-size:13px;
+    display:flex;
+    flex-direction:row;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:3px 4px;
+  }
+  .speedEta strong{font-size:15px}
   .speedMonths{grid-template-columns:repeat(3,1fr);gap:8px}
   .chartSummaryMain{display:block}
   .chartSummaryMain .sep{display:none}
@@ -837,7 +861,7 @@ const KEY="wealth_dashboard_v1",state={target:0,records:[],updatedAt:null,editin
 const money=n=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Number(n)||0),optionalNum=v=>{if(v===""||v===null||v===undefined)return null;const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},monthText=m=>{const[y,mm]=m.split("-");return`${y}年${Number(mm)}月`},num=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>$("toast").classList.remove("show"),1800)}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[]}catch(e){toast("本地数据读取失败")}}
-function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.10,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
+function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.11,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
 function latest(){return[...state.records].sort((a,b)=>b.month.localeCompare(a.month))[0]||null}
 
 const ICONS={
@@ -860,7 +884,7 @@ function renderMonthStatus(){const key=currentMonthKey(),r=state.records.find(x=
 
 function startRows(year=null){return [...state.records].filter(r=>!year||r.month.startsWith(year+"-")).sort((a,b)=>a.month.localeCompare(b.month))}
 function startChanges(rows){const a=[];for(let i=1;i<rows.length;i++)a.push({month:rows[i].month,value:Number(rows[i].start)-Number(rows[i-1].start)});return a}
-function renderSpeed(){const c=startChanges(startRows()).slice(-3),box=$("speedMonths");box.innerHTML="";if(c.length<3){$("speedValue").textContent="—";$("speedEta").textContent="至少需要连续4个月的月初储蓄数据"}else{const avg=c.reduce((s,x)=>s+x.value,0)/3;$("speedValue").textContent=`${avg>0?"+":""}${money(avg)} / 月`;const r=latest(),cur=r?effectiveValue(r):0,remain=Math.max(state.target-cur,0);$("speedEta").innerHTML=!state.target?"设置阶段目标后可估算达标时间":remain<=0?"当前阶段目标已经达到":avg>0?`<span class="etaLabel">按照当前速度</span><strong>预计约 ${Math.ceil(remain/avg)} 个月</strong><span class="etaTarget">达成目标 ${money(state.target)}</span>`:"近3次平均增长未为正，暂不估算"}c.forEach(x=>{const d=document.createElement("div");d.className="speedMonth";d.innerHTML=`<span>${monthText(x.month)}</span><strong class="${x.value>0?"pos":x.value<0?"neg":"neu"}">${x.value>0?"+":""}${money(x.value)}</strong>`;box.appendChild(d)})}
+function renderSpeed(){const c=startChanges(startRows()).slice(-3),box=$("speedMonths");box.innerHTML="";if(c.length<3){$("speedValue").textContent="—";$("speedEta").textContent="至少需要连续4个月的月初储蓄数据"}else{const avg=c.reduce((s,x)=>s+x.value,0)/3;$("speedValue").textContent=`${avg>0?"+":""}${money(avg)} / 月`;const r=latest(),cur=r?effectiveValue(r):0,remain=Math.max(state.target-cur,0);$("speedEta").innerHTML=!state.target?"设置阶段目标后可估算达标时间":remain<=0?"当前阶段目标已经达到":avg>0?`<span class="etaLabel">按当前速度，预计约</span><strong>${Math.ceil(remain/avg)} 个月</strong><span class="etaTarget">达到 ${money(state.target)}</span>`:"近3次平均增长未为正，暂不估算"}c.forEach(x=>{const d=document.createElement("div");d.className="speedMonth";d.innerHTML=`<span>${monthText(x.month)}</span><strong class="${x.value>0?"pos":x.value<0?"neg":"neu"}">${x.value>0?"+":""}${money(x.value)}</strong>`;box.appendChild(d)})}
 function renderGoalHistory(){
  const done=state.goalHistory||[];
  if($("goalDoneCount"))$("goalDoneCount").textContent=`${done.length} 个`;
@@ -998,7 +1022,7 @@ function edit(m){const r=state.records.find(x=>x.month===m);if(!r)return;state.e
 function remove(m){if(!confirm(`确认删除 ${monthText(m)} 的记录吗？`))return;state.records=state.records.filter(r=>r.month!==m);if(state.editing===m)reset();save();render();toast("记录已删除")}
 $("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num($("start").value),end=optionalNum($("end").value),fund=num($("fund").value),note=$("note").value.trim();if(!month||start===null||fund===null)return toast("请填写月份、月初储蓄和公积金");if(state.records.some(r=>r.month===month&&r.month!==state.editing))return toast("该月份已存在，请编辑已有记录");const wasEditing=!!state.editing,r={month,start,end,fund,note};state.records=wasEditing?state.records.map(x=>x.month===state.editing?r:x):[...state.records,r];save();reset();render();toast(wasEditing?"记录已更新":"记录已保存")};
 $("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value=state.target||"";$("modal").classList.add("open")};$("closeModal").onclick=()=>$("modal").classList.remove("open");$("saveTarget").onclick=()=>{const v=num($("targetInput").value);if(v===null)return toast("请输入有效目标金额");state.target=v;save();render();$("modal").classList.remove("open");toast("目标已保存")};$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("open")};
-$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"正在暴富ing",version:2.10,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`正在暴富ing-数据备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
+$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"正在暴富ing",version:2.11,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`正在暴富ing-数据备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
 $("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:optionalNum(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[];save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
 $("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});$("yearSelect").addEventListener("change",renderYearSummary);
 
