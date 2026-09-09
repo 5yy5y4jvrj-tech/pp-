@@ -6,14 +6,14 @@
 <meta name="theme-color" content="#f6f9f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="财富仪表盘">
-<title>财富仪表盘 · V2.7</title>
+<title>正在暴富ing · V2.8</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="favicon-32.png">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#7a8496;--line:#e8edf4;--blue:#2f6fed;--green:#1aa184;--red:#d84d4d;--shadow:0 10px 30px rgba(23,45,79,.07)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}
-.wrap{max-width:980px;margin:auto;padding:24px 16px 40px}header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}h1{margin:0 0 6px;font-size:28px}.sub,.updated{color:var(--muted);font-size:13px}.updated{white-space:nowrap;padding-top:8px}
+.wrap{max-width:980px;margin:auto;padding:24px 16px 40px}header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}h1{margin:0 0 6px;font-size:28px}.sub,.updated{color:var(--muted);font-size:13px}.updated{white-space:nowrap;padding-top:8px;background:#f7faf8;border:1px solid var(--line);padding:8px 10px;border-radius:12px}
 .grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}.metric{padding:17px}.label{font-size:13px;color:var(--muted);margin-bottom:8px}.value{font-size:clamp(23px,6vw,32px);font-weight:750;overflow-wrap:anywhere}.hint{font-size:12px;color:var(--muted);margin-top:6px}.targetBtn{border:0;background:transparent;padding:0;text-align:left;width:100%;color:inherit}
 .progress{padding:18px;margin-top:12px}.progressHead{display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;font-weight:700}.bar{height:11px;background:#e8edf5;border-radius:999px;overflow:hidden}.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:999px}
 section{margin-top:22px}.sectionHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}h2{font-size:18px;margin:0}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:white;color:var(--text);border-radius:13px;padding:10px 13px;font-weight:700}.btn.primary{background:var(--blue);border-color:var(--blue);color:white}.btn.red{color:var(--red)}
@@ -369,12 +369,11 @@ input,textarea,.yearSelect{background:#fbfdfc}
 .yearHighlightValue{font-size:16px;font-weight:820}
 .yearHighlightSub{font-size:12px;color:#5f6f68;margin-top:2px}
 .yearSubCards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.yearSubCard{padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:#f7faf8;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.yearSubCard{padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:#f7faf8;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
 .yearSubIcon{width:34px;height:34px;border-radius:10px;background:#edf7f3;display:flex;align-items:center;justify-content:center;color:#176b52}
 .yearSubIcon .icon{width:20px;height:20px}
 .yearSubTitle{font-size:12px;color:var(--muted)}
 .yearSubMain{font-size:16px;font-weight:820;color:#176b52;margin-top:2px}
-.yearSubArrow{color:#8a9891;font-size:18px}
 .yearOldGrid,.annualHighlights,.annualExtra{display:none!important}
 
 /* record table monthly change semantics */
@@ -432,11 +431,32 @@ input,textarea,.yearSelect{background:#fbfdfc}
 }
 .recordTable td.consume{color:#ef7417}
 
+
+/* V2.8 tweaks */
+input[type="month"]{
+  appearance:none;
+  -webkit-appearance:none;
+  background:#fbfdff;
+  color:var(--text);
+  box-shadow:none;
+}
+input[type="month"]::-webkit-calendar-picker-indicator{
+  opacity:.7;
+}
+input[type="month"]:focus{
+  border-color:var(--line);
+  box-shadow:none;
+}
+@media(max-width:620px){
+  header{display:block}
+  .updated{display:inline-flex;align-items:center;margin-top:8px}
+}
+
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>财富仪表盘</h1><div class="sub">所有原始金额均由你手动填写，月末金额可后补</div></div><div class="updated" id="updated">尚未更新</div></header>
+<header><div><h1>正在暴富ing</h1><div class="sub">所有原始金额均由你手动填写，月末金额可后补</div></div><div class="updated" id="updated">尚未更新</div></header>
 <div class="hero">
 <div class="heroTopLine"><span id="heroCoinsIcon"></span><div class="label">当前储蓄</div></div>
 <div class="heroValue" id="currentValue">0</div>
@@ -481,8 +501,8 @@ input,textarea,.yearSelect{background:#fbfdfc}
     <div class="yearHighlightItem"><span id="yearDownIcon"></span><div><div class="yearHighlightLabel">单月下降最多</div><div class="yearHighlightValue" id="yearWorstMonth">—</div><div class="yearHighlightSub" id="yearWorstValue">—</div></div></div>
   </div>
   <div class="yearSubCards">
-    <div class="yearSubCard"><div class="yearSubIcon" id="yearFundIcon"></div><div><div class="yearSubTitle">公积金（账户余额）</div><div class="yearSubMain" id="yearFundChange">—</div><div class="yearSubTitle" id="yearFundDetail">年初 — · 当前 —</div></div><div class="yearSubArrow">›</div></div>
-    <div class="yearSubCard"><div class="yearSubIcon" id="yearGoalIcon"></div><div><div class="yearSubTitle">目标完成情况</div><div class="yearSubMain" id="yearGoalStatus">—</div><div class="yearSubTitle" id="yearGoalDetail">—</div></div><div class="yearSubArrow">›</div></div>
+    <div class="yearSubCard"><div class="yearSubIcon" id="yearFundIcon"></div><div><div class="yearSubTitle">公积金（账户余额）</div><div class="yearSubMain" id="yearFundChange">—</div><div class="yearSubTitle" id="yearFundDetail">年初 — · 当前 —</div></div></div>
+    <div class="yearSubCard"><div class="yearSubIcon" id="yearGoalIcon"></div><div><div class="yearSubTitle">目标完成情况</div><div class="yearSubMain" id="yearGoalStatus">—</div><div class="yearSubTitle" id="yearGoalDetail">—</div></div></div>
   </div>
 </div></section>
 <section>
@@ -527,7 +547,7 @@ const KEY="wealth_dashboard_v1",state={target:0,records:[],updatedAt:null,editin
 const money=n=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Number(n)||0),optionalNum=v=>{if(v===""||v===null||v===undefined)return null;const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},monthText=m=>{const[y,mm]=m.split("-");return`${y}年${Number(mm)}月`},num=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>$("toast").classList.remove("show"),1800)}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[]}catch(e){toast("本地数据读取失败")}}
-function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.7,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
+function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.8,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
 function latest(){return[...state.records].sort((a,b)=>b.month.localeCompare(a.month))[0]||null}
 
 const ICONS={
@@ -687,7 +707,7 @@ function edit(m){const r=state.records.find(x=>x.month===m);if(!r)return;state.e
 function remove(m){if(!confirm(`确认删除 ${monthText(m)} 的记录吗？`))return;state.records=state.records.filter(r=>r.month!==m);if(state.editing===m)reset();save();render();toast("记录已删除")}
 $("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num($("start").value),end=optionalNum($("end").value),fund=num($("fund").value),note=$("note").value.trim();if(!month||start===null||fund===null)return toast("请填写月份、月初储蓄和公积金");if(state.records.some(r=>r.month===month&&r.month!==state.editing))return toast("该月份已存在，请编辑已有记录");const wasEditing=!!state.editing,r={month,start,end,fund,note};state.records=wasEditing?state.records.map(x=>x.month===state.editing?r:x):[...state.records,r];save();reset();render();toast(wasEditing?"记录已更新":"记录已保存")};
 $("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value=state.target||"";$("modal").classList.add("open")};$("closeModal").onclick=()=>$("modal").classList.remove("open");$("saveTarget").onclick=()=>{const v=num($("targetInput").value);if(v===null)return toast("请输入有效目标金额");state.target=v;save();render();$("modal").classList.remove("open");toast("目标已保存")};$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("open")};
-$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"财富仪表盘",version:2.7,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`财富仪表盘备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
+$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"正在暴富ing",version:2.8,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`正在暴富ing-数据备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
 $("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:optionalNum(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[];save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
 $("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});$("yearSelect").addEventListener("change",renderYearSummary);
 
