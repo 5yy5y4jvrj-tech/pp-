@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f6f9f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="财富仪表盘">
-<title>正在暴富ing · V2.8</title>
+<title>正在暴富ing · V2.9</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="favicon-32.png">
@@ -452,11 +452,274 @@ input[type="month"]:focus{
   .updated{display:inline-flex;align-items:center;margin-top:8px}
 }
 
+
+/* V2.9 — personal pastel refresh */
+:root{
+  --bg:#f8f5f1;
+  --card:#ffffff;
+  --text:#16231f;
+  --muted:#858c89;
+  --line:#ece7e2;
+
+  --blue:#54b7a3;
+  --green:#3ea78e;
+  --green-deep:#2f7e69;
+  --green-soft:#eaf6f1;
+
+  --pink:#e8a7a8;
+  --pink-deep:#c9777b;
+  --pink-soft:#fbedeb;
+
+  --orange:#e7a16c;
+  --orange-soft:#fff1e6;
+
+  --cream:#fbf7f1;
+  --shadow:0 10px 28px rgba(45,72,62,.06);
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+}
+.wrap{max-width:980px}
+
+/* 顶部 */
+.topHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:18px;
+}
+.brandBlock{min-width:0}
+.brandTitleRow{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.brandEmoji{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;
+  height:34px;
+  font-size:26px;
+  line-height:1;
+  flex:0 0 auto;
+  transform:translateY(-1px);
+}
+.topHeader h1{
+  margin:0;
+  font-size:30px;
+  line-height:1.05;
+  letter-spacing:.01em;
+  color:#10211c;
+}
+.brandSub{
+  margin-top:7px;
+  margin-left:43px;
+  color:#a0a5a2;
+  font-size:11.5px;
+  letter-spacing:.06em;
+  font-weight:500;
+}
+.updated{
+  white-space:nowrap;
+  padding:4px 0 0;
+  margin:0;
+  background:transparent;
+  border:0;
+  border-radius:0;
+  color:#a0a5a2;
+  font-size:11.5px;
+  font-weight:500;
+}
+
+/* 卡片与按钮 */
+.card{
+  background:var(--card);
+  border-color:var(--line);
+  box-shadow:var(--shadow);
+}
+.btn{
+  border-color:var(--line);
+  background:#fff;
+  color:var(--text);
+}
+.btn.primary{
+  background:var(--green);
+  border-color:var(--green);
+  color:#fff;
+}
+.small{
+  background:var(--green-soft);
+  color:var(--green-deep);
+}
+.small.del{
+  background:var(--pink-soft);
+  color:var(--pink-deep);
+}
+.notice{
+  color:#8d938f;
+}
+
+/* 主储蓄卡：保留主视觉，但绿更轻 */
+.hero{
+  background:linear-gradient(150deg,#3fa88f 0%,#4db29d 100%);
+  box-shadow:0 14px 34px rgba(62,167,142,.18);
+}
+.hero .bar{
+  background:rgba(255,255,255,.28);
+}
+.hero .bar span{
+  background:linear-gradient(90deg,#fff,#e9f7f2);
+}
+.heroInfoItem{
+  border-color:rgba(255,255,255,.18);
+}
+
+/* 通用图标基色 */
+.iconBadge{
+  background:var(--green-soft);
+  color:var(--green-deep);
+  box-shadow:none;
+}
+.iconBadge .icon{
+  color:currentColor;
+}
+
+/* 主卡里的图标保持白色系 */
+.hero .iconBadge,
+.heroInfoHead .iconBadge{
+  background:rgba(255,255,255,.16);
+  color:#fff;
+}
+
+/* 分区图标做轻度多色，不再全部一个绿 */
+.sectionHead .iconBadge{
+  background:var(--green-soft);
+  color:var(--green-deep);
+}
+section:nth-of-type(2) .sectionHead .iconBadge{
+  background:var(--pink-soft);
+  color:var(--pink-deep);
+}
+section:nth-of-type(3) .sectionHead .iconBadge{
+  background:var(--orange-soft);
+  color:#c98251;
+}
+section:nth-of-type(4) .sectionHead .iconBadge{
+  background:#eef3f1;
+  color:#6f817a;
+}
+
+/* 年度储蓄细节卡片图标 */
+.yearHighlightItem:nth-child(1) .iconBadge{
+  background:var(--orange-soft);
+  color:#c98251;
+}
+.yearHighlightItem:nth-child(2) .iconBadge{
+  background:var(--green-soft);
+  color:var(--green-deep);
+}
+.yearHighlightItem:nth-child(3) .iconBadge{
+  background:var(--pink-soft);
+  color:var(--pink-deep);
+}
+.yearSubIcon{
+  background:var(--green-soft);
+  color:var(--green-deep);
+}
+.yearSubCard:nth-child(2) .yearSubIcon{
+  background:var(--pink-soft);
+  color:var(--pink-deep);
+}
+
+/* 状态与语义色 */
+.pos{color:var(--green-deep)}
+.neg{color:var(--pink-deep)}
+.recordTable td:nth-child(5).pos{color:var(--green-deep)}
+.recordTable td:nth-child(5).neg{color:#d18754}
+.recordTable td.consume{color:#d18754}
+.badge.done,
+.statusPill.done{
+  background:var(--green-soft);
+  color:var(--green-deep);
+}
+.badge.running,
+.statusPill.running{
+  background:var(--orange-soft);
+  color:#c67d48;
+}
+.monthNote,
+.chartPrimaryNote{
+  background:var(--cream);
+  border-color:#eee7df;
+}
+.speedEta{
+  background:var(--green-soft);
+}
+.legendDot.start{background:var(--green)}
+.legendDot.end{background:var(--pink)}
+
+/* 输入区 */
+input,textarea{
+  background:#fdfbf8;
+  border-color:var(--line);
+}
+input:focus,textarea:focus{
+  border-color:#8bcbbb;
+  box-shadow:0 0 0 3px rgba(62,167,142,.10);
+}
+input[type="month"]{
+  background:#fdfbf8;
+  border-color:var(--line);
+}
+input[type="month"]:focus{
+  border-color:#8bcbbb;
+  box-shadow:0 0 0 3px rgba(62,167,142,.08);
+}
+
+@media(max-width:620px){
+  .topHeader{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .topHeader h1{
+    font-size:27px;
+  }
+  .brandEmoji{
+    width:31px;
+    height:31px;
+    font-size:24px;
+  }
+  .brandSub{
+    margin-left:40px;
+    margin-top:5px;
+    font-size:10.5px;
+  }
+  .updated{
+    padding-top:7px;
+    font-size:10.5px;
+  }
+}
+
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>正在暴富ing</h1><div class="sub">所有原始金额均由你手动填写，月末金额可后补</div></div><div class="updated" id="updated">尚未更新</div></header>
+<header class="topHeader">
+  <div class="brandBlock">
+    <div class="brandTitleRow">
+      <span class="brandEmoji" aria-hidden="true">💸</span>
+      <h1>正在暴富ing</h1>
+    </div>
+    <div class="brandSub">money come money come</div>
+  </div>
+  <div class="updated" id="updated">尚未更新</div>
+</header>
 <div class="hero">
 <div class="heroTopLine"><span id="heroCoinsIcon"></span><div class="label">当前储蓄</div></div>
 <div class="heroValue" id="currentValue">0</div>
@@ -547,7 +810,7 @@ const KEY="wealth_dashboard_v1",state={target:0,records:[],updatedAt:null,editin
 const money=n=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Number(n)||0),optionalNum=v=>{if(v===""||v===null||v===undefined)return null;const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},monthText=m=>{const[y,mm]=m.split("-");return`${y}年${Number(mm)}月`},num=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>$("toast").classList.remove("show"),1800)}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[]}catch(e){toast("本地数据读取失败")}}
-function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.8,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
+function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.9,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
 function latest(){return[...state.records].sort((a,b)=>b.month.localeCompare(a.month))[0]||null}
 
 const ICONS={
@@ -675,7 +938,7 @@ function drawTrendChart(){
 }
 
 function render(){archiveReachedGoal();renderMonthStatus();renderSpeed();renderGoalHistory();renderYearOptions();const l=latest(),current=l?(l.end===null||l.end===undefined?Number(l.start):Number(l.end)):0,fund=l?Number(l.fund):0,remain=state.target?Math.max(state.target-current,0):0,p=state.target?Math.min(current/state.target*100,100):0;
-$("targetValue").textContent=money(state.target);$("currentValue").textContent=money(current);$("fundValue").textContent=money(fund);$("remainingValue").textContent=money(remain);$("remainingHint").textContent=state.target?(current>=state.target?"目标已完成":"还需继续积累"):"尚未设置目标";$("rate").textContent=`${p.toFixed(p%1?1:0)}%`;$("bar").style.width=`${p}%`;$("updated").textContent=state.updatedAt?`最后更新：${new Date(state.updatedAt).toLocaleString("zh-CN")}`:"尚未更新";
+$("targetValue").textContent=money(state.target);$("currentValue").textContent=money(current);$("fundValue").textContent=money(fund);$("remainingValue").textContent=money(remain);$("remainingHint").textContent=state.target?(current>=state.target?"目标已完成":"还需继续积累"):"尚未设置目标";$("rate").textContent=`${p.toFixed(p%1?1:0)}%`;$("bar").style.width=`${p}%`;$("updated").textContent=state.updatedAt?(()=>{const d=new Date(state.updatedAt);const mm=d.getMonth()+1,dd=d.getDate(),hh=String(d.getHours()).padStart(2,"0"),mi=String(d.getMinutes()).padStart(2,"0");return`更新于 ${mm}/${dd} ${hh}:${mi}`})():"尚未更新";
 const list=[...state.records].sort((a,b)=>b.month.localeCompare(a.month));$("records").innerHTML="";$("clearBtn").classList.toggle("hidden",!list.length);if(!list.length){drawTrendChart();$("records").innerHTML='<div class="card empty">还没有月度记录。<br>填写上方表单后，这里会生成月度汇总记录。</div>';return}
 const table=document.createElement("div");table.className="recordTableWrap";
 table.innerHTML=`<table class="recordTable"><thead><tr>
@@ -707,7 +970,7 @@ function edit(m){const r=state.records.find(x=>x.month===m);if(!r)return;state.e
 function remove(m){if(!confirm(`确认删除 ${monthText(m)} 的记录吗？`))return;state.records=state.records.filter(r=>r.month!==m);if(state.editing===m)reset();save();render();toast("记录已删除")}
 $("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num($("start").value),end=optionalNum($("end").value),fund=num($("fund").value),note=$("note").value.trim();if(!month||start===null||fund===null)return toast("请填写月份、月初储蓄和公积金");if(state.records.some(r=>r.month===month&&r.month!==state.editing))return toast("该月份已存在，请编辑已有记录");const wasEditing=!!state.editing,r={month,start,end,fund,note};state.records=wasEditing?state.records.map(x=>x.month===state.editing?r:x):[...state.records,r];save();reset();render();toast(wasEditing?"记录已更新":"记录已保存")};
 $("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value=state.target||"";$("modal").classList.add("open")};$("closeModal").onclick=()=>$("modal").classList.remove("open");$("saveTarget").onclick=()=>{const v=num($("targetInput").value);if(v===null)return toast("请输入有效目标金额");state.target=v;save();render();$("modal").classList.remove("open");toast("目标已保存")};$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("open")};
-$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"正在暴富ing",version:2.8,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`正在暴富ing-数据备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
+$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"正在暴富ing",version:2.9,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`正在暴富ing-数据备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
 $("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:optionalNum(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[];save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
 $("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});$("yearSelect").addEventListener("change",renderYearSummary);
 
