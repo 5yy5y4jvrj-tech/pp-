@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f6f9f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="财富仪表盘">
-<title>正在暴富ing · V2.9</title>
+<title>正在暴富ing · V2.10</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="favicon-32.png">
@@ -706,6 +706,33 @@ input[type="month"]:focus{
   }
 }
 
+
+/* V2.10 bugfix + layout tweaks */
+.speedEta strong{color:var(--orange);font-size:24px;line-height:1.15;display:inline-block;margin:2px 0 3px}
+.speedEta .etaLabel,.speedEta .etaTarget{display:block}
+.speedEta .etaLabel{color:#61706a}
+.speedEta .etaTarget{color:#61706a}
+.chartSummary{display:grid;gap:6px}
+.chartSummaryMain{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.chartSummaryLabel{color:var(--muted)}
+.chartSummaryValue{color:var(--green-deep);font-size:18px;font-weight:820}
+.chartSummaryRate{color:var(--green-deep);font-size:16px;font-weight:760}
+.chartSummaryMeta{font-size:12px;color:var(--muted)}
+.chartSummaryMain .sep{color:#c7cec9}
+.recordTable td.pos{color:var(--green-deep)}
+.recordTable td.neg{color:#d18754}
+.recordTable td.neu{color:var(--muted)}
+@media(max-width:640px){
+  .speedTop{flex-direction:column;align-items:stretch}
+  .speedValue{font-size:30px}
+  .speedEta{min-width:0;padding:12px 14px;line-height:1.45}
+  .speedEta strong{font-size:22px}
+  .speedMonths{grid-template-columns:repeat(3,1fr);gap:8px}
+  .chartSummaryMain{display:block}
+  .chartSummaryMain .sep{display:none}
+  .chartSummaryValue,.chartSummaryRate{display:inline-block;margin-top:4px}
+}
+
 </style>
 </head>
 <body>
@@ -810,7 +837,7 @@ const KEY="wealth_dashboard_v1",state={target:0,records:[],updatedAt:null,editin
 const money=n=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Number(n)||0),optionalNum=v=>{if(v===""||v===null||v===undefined)return null;const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},monthText=m=>{const[y,mm]=m.split("-");return`${y}年${Number(mm)}月`},num=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>$("toast").classList.remove("show"),1800)}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[]}catch(e){toast("本地数据读取失败")}}
-function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.9,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
+function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.10,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
 function latest(){return[...state.records].sort((a,b)=>b.month.localeCompare(a.month))[0]||null}
 
 const ICONS={
@@ -833,7 +860,7 @@ function renderMonthStatus(){const key=currentMonthKey(),r=state.records.find(x=
 
 function startRows(year=null){return [...state.records].filter(r=>!year||r.month.startsWith(year+"-")).sort((a,b)=>a.month.localeCompare(b.month))}
 function startChanges(rows){const a=[];for(let i=1;i<rows.length;i++)a.push({month:rows[i].month,value:Number(rows[i].start)-Number(rows[i-1].start)});return a}
-function renderSpeed(){const c=startChanges(startRows()).slice(-3),box=$("speedMonths");box.innerHTML="";if(c.length<3){$("speedValue").textContent="—";$("speedEta").textContent="至少需要连续4个月的月初储蓄数据"}else{const avg=c.reduce((s,x)=>s+x.value,0)/3;$("speedValue").textContent=`${avg>0?"+":""}${money(avg)} / 月`;const r=latest(),cur=r?effectiveValue(r):0,remain=Math.max(state.target-cur,0);$("speedEta").innerHTML=!state.target?"设置阶段目标后可估算达标时间":remain<=0?"当前阶段目标已经达到":avg>0?`按照当前速度<br><strong>预计约 ${Math.ceil(remain/avg)} 个月</strong><br>达到 ${money(state.target)}`:"近3次平均增长未为正，暂不估算"}c.forEach(x=>{const d=document.createElement("div");d.className="speedMonth";d.innerHTML=`<span>${monthText(x.month)}</span><strong class="${x.value>0?"pos":x.value<0?"neg":"neu"}">${x.value>0?"+":""}${money(x.value)}</strong>`;box.appendChild(d)})}
+function renderSpeed(){const c=startChanges(startRows()).slice(-3),box=$("speedMonths");box.innerHTML="";if(c.length<3){$("speedValue").textContent="—";$("speedEta").textContent="至少需要连续4个月的月初储蓄数据"}else{const avg=c.reduce((s,x)=>s+x.value,0)/3;$("speedValue").textContent=`${avg>0?"+":""}${money(avg)} / 月`;const r=latest(),cur=r?effectiveValue(r):0,remain=Math.max(state.target-cur,0);$("speedEta").innerHTML=!state.target?"设置阶段目标后可估算达标时间":remain<=0?"当前阶段目标已经达到":avg>0?`<span class="etaLabel">按照当前速度</span><strong>预计约 ${Math.ceil(remain/avg)} 个月</strong><span class="etaTarget">达成目标 ${money(state.target)}</span>`:"近3次平均增长未为正，暂不估算"}c.forEach(x=>{const d=document.createElement("div");d.className="speedMonth";d.innerHTML=`<span>${monthText(x.month)}</span><strong class="${x.value>0?"pos":x.value<0?"neg":"neu"}">${x.value>0?"+":""}${money(x.value)}</strong>`;box.appendChild(d)})}
 function renderGoalHistory(){
  const done=state.goalHistory||[];
  if($("goalDoneCount"))$("goalDoneCount").textContent=`${done.length} 个`;
@@ -930,7 +957,7 @@ function drawTrendChart(){
   if(doneIdx&&doneIdx.i>0){
     const prev=rows[doneIdx.i-1],done=doneIdx.r;
     const d=Number(done.start)-Number(prev.start),rt=Number(prev.start)>0?d/Number(prev.start)*100:0,sg=d>0?"+":"";
-    $("chartSummary").innerHTML=`最近一个已完成月财富变化：<strong>${sg}${money(d)} · ${sg}${rt.toFixed(2)}%</strong><br><span style="font-size:12px">按月初储蓄：${monthText(prev.month)} → ${monthText(done.month)}</span>`;
+    $("chartSummary").innerHTML=`<div class="chartSummaryMain"><span class="chartSummaryLabel">最近一个已完成月财富变化</span><strong class="chartSummaryValue">${sg}${money(d)}</strong><span class="sep">·</span><span class="chartSummaryRate">${sg}${rt.toFixed(2)}%</span></div><div class="chartSummaryMeta">按月初储蓄：${monthText(prev.month)} → ${monthText(done.month)}</div>`;
   }else{
     $("chartSummary").textContent="至少需要两个连续月份，才能计算最近财富变化";
   }
@@ -942,22 +969,23 @@ $("targetValue").textContent=money(state.target);$("currentValue").textContent=m
 const list=[...state.records].sort((a,b)=>b.month.localeCompare(a.month));$("records").innerHTML="";$("clearBtn").classList.toggle("hidden",!list.length);if(!list.length){drawTrendChart();$("records").innerHTML='<div class="card empty">还没有月度记录。<br>填写上方表单后，这里会生成月度汇总记录。</div>';return}
 const table=document.createElement("div");table.className="recordTableWrap";
 table.innerHTML=`<table class="recordTable"><thead><tr>
-<th>月份</th><th>月初储蓄</th><th>月末储蓄</th><th>公积金</th><th>变化<span class="thSub">月初－月末</span></th><th>当月消耗<span class="thSub">占月初储蓄</span></th><th>状态</th><th>操作</th>
+<th>月份</th><th>月初储蓄</th><th>月末储蓄</th><th>公积金</th><th>变化<span class="thSub">月末－月初</span></th><th>当月消耗<span class="thSub">净减少占月初储蓄</span></th><th>状态</th><th>操作</th>
 </tr></thead><tbody></tbody></table>`;
 const tbody=table.querySelector("tbody");
 list.forEach(r=>{
   const hasEnd=r.end!==null&&r.end!==undefined&&r.end!=="";
-  const diff=hasEnd?Number(r.start)-Number(r.end):null;
-  const rt=hasEnd&&Number(r.start)>0?diff/Number(r.start)*100:null;
-  const sign=diff!==null&&diff<0?"+":"";
-  const cls=diff===null?"neu":"consume";
+  const diff=hasEnd?Number(r.end)-Number(r.start):null;
+  const consume=hasEnd&&diff<0?Math.abs(diff):null;
+  const consumeRate=consume!==null&&Number(r.start)>0?consume/Number(r.start)*100:null;
+  const sign=diff!==null&&diff>0?"+":"";
+  const cls=diff===null?"neu":diff>0?"pos":diff<0?"neg":"neu";
   const tr=document.createElement("tr");
   tr.innerHTML=`<td><strong>${monthText(r.month)}</strong></td>
   <td>${money(r.start)}</td>
   <td>${hasEnd?money(r.end):"—"}</td>
   <td>${money(r.fund)}</td>
   <td class="${cls}">${hasEnd?`${sign}${money(diff)}`:"—"}</td>
-  <td class="${cls}">${hasEnd&&rt!==null?`${rt.toFixed(2)}%`:"—"}</td>
+  <td class="${consume!==null?"consume":"neu"}">${hasEnd&&consumeRate!==null?`${consumeRate.toFixed(2)}%`:"—"}</td>
   <td><span class="statusPill ${hasEnd?"done":"running"}">${hasEnd?"已完成":"进行中"}</span></td>
   <td><div class="tableActions"><button class="tableAction" data-edit="${r.month}">编辑</button><button class="tableAction delete" data-del="${r.month}">删除</button></div></td>`;
   tbody.appendChild(tr);
@@ -970,7 +998,7 @@ function edit(m){const r=state.records.find(x=>x.month===m);if(!r)return;state.e
 function remove(m){if(!confirm(`确认删除 ${monthText(m)} 的记录吗？`))return;state.records=state.records.filter(r=>r.month!==m);if(state.editing===m)reset();save();render();toast("记录已删除")}
 $("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num($("start").value),end=optionalNum($("end").value),fund=num($("fund").value),note=$("note").value.trim();if(!month||start===null||fund===null)return toast("请填写月份、月初储蓄和公积金");if(state.records.some(r=>r.month===month&&r.month!==state.editing))return toast("该月份已存在，请编辑已有记录");const wasEditing=!!state.editing,r={month,start,end,fund,note};state.records=wasEditing?state.records.map(x=>x.month===state.editing?r:x):[...state.records,r];save();reset();render();toast(wasEditing?"记录已更新":"记录已保存")};
 $("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value=state.target||"";$("modal").classList.add("open")};$("closeModal").onclick=()=>$("modal").classList.remove("open");$("saveTarget").onclick=()=>{const v=num($("targetInput").value);if(v===null)return toast("请输入有效目标金额");state.target=v;save();render();$("modal").classList.remove("open");toast("目标已保存")};$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("open")};
-$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"正在暴富ing",version:2.9,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`正在暴富ing-数据备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
+$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"正在暴富ing",version:2.10,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`正在暴富ing-数据备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
 $("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:optionalNum(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[];save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
 $("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});$("yearSelect").addEventListener("change",renderYearSummary);
 
@@ -998,6 +1026,6 @@ document.querySelectorAll(".sectionHead h2").forEach(h=>{
   h.classList.add("sectionTitle");
 });
 
-$("trendChart").addEventListener("click",e=>{const c=$("trendChart"),rows=c._chartRows;if(!rows||!rows.length)return;const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left;let idx=0,best=Infinity;rows.forEach((r,i)=>{const xx=c._chartX(i),d=Math.abs(xx-mx);if(d<best){best=d;idx=i}});const r=rows[idx],has=r.end!==null&&r.end!==undefined&&r.end!=="",cur=effectiveValue(r),tip=$("chartTip");tip.innerHTML=`<strong>${monthText(r.month)}</strong><br>月初　${money(r.start)}<br>月末　${has?money(r.end):"待填写"}<br>当前　<strong>${money(cur)}</strong>${has?"":"<br><span style='color:#e98524'>进行中</span>"}`;tip.style.left=Math.max(6,Math.min(rect.width-150,c._chartX(idx)-65))+"px";tip.style.top="35px";tip.classList.add("show")});
+$("trendChart").addEventListener("click",e=>{const c=$("trendChart"),rows=c._chartRows;if(!rows||!rows.length)return;const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left;let idx=0,best=Infinity;rows.forEach((r,i)=>{const xx=c._chartX(i),d=Math.abs(xx-mx);if(d<best){best=d;idx=i}});const r=rows[idx],has=r.end!==null&&r.end!==undefined&&r.end!=="",cur=effectiveValue(r),tip=$("chartTip");tip.innerHTML=has?`<strong>${monthText(r.month)}</strong><br>月初　${money(r.start)}<br>月末　${money(r.end)}`:`<strong>${monthText(r.month)}</strong><br>月初　${money(r.start)}<br>当前　<strong>${money(cur)}</strong><br><span style='color:#e98524'>进行中</span>`;tip.style.left=Math.max(6,Math.min(rect.width-150,c._chartX(idx)-65))+"px";tip.style.top="35px";tip.classList.add("show")});
 load();setDefaultMonth();render();
 </script></body></html>
