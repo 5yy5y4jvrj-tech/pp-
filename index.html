@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f6f9f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="财富仪表盘">
-<title>正在暴富ing · V2.12</title>
+<title>正在暴富ing · V2.13</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="favicon-32.png">
@@ -825,6 +825,86 @@ input[type="month"]:focus{
   }
 }
 
+
+/* V2.13 — confirmed milestones + savings rhythm */
+.goalReachedBanner{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:13px;
+  align-items:center;
+  margin-top:13px;
+  padding:16px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#fff0ed 0%,#fff8f2 46%,#edf8f3 100%);
+  border:1px solid #f2dcd6;
+  box-shadow:0 12px 28px rgba(72,62,57,.08);
+}
+.goalReachedIcon{
+  width:44px;height:44px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;background:#fff;
+  box-shadow:0 5px 14px rgba(72,62,57,.07);
+}
+.goalReachedEyebrow{font-size:11px;color:var(--pink-deep);font-weight:800;margin-bottom:3px}
+.goalReachedTitle{font-size:18px;font-weight:850;color:var(--text)}
+.goalReachedTitle span{color:var(--green-deep)}
+.goalReachedSub{font-size:11px;color:var(--muted);line-height:1.5;margin-top:4px}
+.goalReachedBtn{
+  border:0;border-radius:13px;
+  background:var(--green);color:#fff;
+  padding:10px 13px;font-weight:800;
+  white-space:nowrap;
+}
+.goalReachedBtn:active{transform:translateY(1px)}
+
+.speedEta{
+  min-width:150px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:4px;
+}
+.speedEtaLabel{font-size:12px;color:var(--muted)}
+.speedEta strong{font-size:21px!important;color:var(--green-deep)!important;line-height:1.2;margin:0!important}
+.speedEta strong.neg{color:#d18754!important}
+.speedEta strong.neu{color:var(--muted)!important}
+
+.goalHistoryItem{position:relative}
+.goalHistoryActions{display:flex;gap:8px;margin-top:10px}
+.goalHistoryAction{
+  border:0;border-radius:9px;padding:7px 10px;
+  font-size:12px;font-weight:750;
+  background:var(--green-soft);color:var(--green-deep);
+}
+.goalHistoryAction.delete{background:var(--pink-soft);color:var(--pink-deep)}
+.goalHistoryCurrentNote{
+  margin-top:9px;padding:8px 10px;border-radius:10px;
+  background:var(--cream);color:var(--muted);font-size:11px;
+}
+
+@media(max-width:640px){
+  .goalReachedBanner{
+    grid-template-columns:auto 1fr;
+    padding:14px;
+  }
+  .goalReachedBtn{
+    grid-column:1/-1;
+    width:100%;
+  }
+  .speedTop{
+    display:grid!important;
+    grid-template-columns:1fr 1fr;
+    align-items:stretch;
+    gap:10px;
+  }
+  .speedEta{
+    margin-top:0!important;
+    min-width:0;
+    padding:11px 12px;
+  }
+  .speedEta strong{font-size:18px!important}
+}
+
 </style>
 </head>
 <body>
@@ -863,12 +943,23 @@ input[type="month"]:focus{
 </div>
 <div class="hidden" id="remainingHint"></div>
 </div>
+
+<div class="goalReachedBanner hidden" id="goalReachedBanner">
+  <div class="goalReachedIcon">🎉</div>
+  <div class="goalReachedBody">
+    <div class="goalReachedEyebrow">阶段目标已达到</div>
+    <div class="goalReachedTitle"><span id="goalReachedAmount">—</span> 已经到手啦！</div>
+    <div class="goalReachedSub">确认后才会记入「已达成目标」，避免误填数据留下错误里程碑。</div>
+  </div>
+  <button class="goalReachedBtn" id="confirmGoalReached">确认达成</button>
+</div>
+
 <section><div class="sectionHead"><h2>本月状态</h2></div>
 <div class="card monthCard"><div class="monthTop"><div class="monthName" id="monthName">本月</div><div class="badge running" id="monthStatus">暂无记录</div></div>
 <div class="monthMain"><div class="label">当前储蓄</div><div class="monthCurrent" id="monthCurrentValue">—</div></div>
 <div class="monthSplit"><div><div class="label">月初储蓄</div><div class="monthMinor" id="monthStartValue">—</div></div><div><div class="label">月内变化</div><div class="monthMinor" id="monthChangeValue">—</div></div></div>
 <div class="monthNote" id="monthStatusHint">新增本月记录后显示</div></div></section>
-<section><div class="sectionHead"><h2>储蓄速度</h2></div><div class="card speedCard"><div class="speedTop"><div><div class="label">近3次月初储蓄变化平均</div><div class="speedValue" id="speedValue">—</div></div><div class="speedEta" id="speedEta">至少需要连续4个月的月初储蓄数据</div></div><div class="label" style="margin-top:15px">最近3次月度变化</div><div class="speedMonths" id="speedMonths"></div></div></section><section><div class="sectionHead"><h2>年度储蓄</h2></div>
+<section><div class="sectionHead"><h2>储蓄节奏</h2></div><div class="card speedCard"><div class="speedTop"><div><div class="label">近3次月初净增加平均</div><div class="speedValue" id="speedValue">—</div></div><div class="speedEta" id="speedEta"><span class="speedEtaLabel">近3次累计增加</span><strong>—</strong></div></div><div class="label" style="margin-top:15px">最近3次月初变化</div><div class="speedMonths" id="speedMonths"></div></div></section><section><div class="sectionHead"><h2>年度储蓄</h2></div>
 <div class="card yearCard">
   <div class="yearHead"><div class="chartTitle" id="yearTitle">年度储蓄概览 · 2026</div><select class="yearSelect" id="yearSelect"></select></div>
   <div class="yearCoreGrid">
@@ -923,13 +1014,27 @@ input[type="month"]:focus{
 <section><div class="sectionHead"><h2>月度记录</h2><button class="btn red hidden" id="clearBtn">清空全部</button></div><div class="records" id="records"></div></section>
 </div>
 <div class="modalWrap" id="modal"><div class="modal"><h3>设置储蓄目标</h3><p>目标只影响进度计算，不会修改月度记录。</p><label for="targetInput">目标金额</label><input id="targetInput" type="number" min="0" step="0.01" inputmode="decimal" placeholder="请手动填写"><div class="formBtns"><button class="btn" id="closeModal">取消</button><button class="btn primary" id="saveTarget">保存目标</button></div></div></div>
-<div class="modalWrap" id="goalHistoryModal"><div class="modal"><h3>我的储蓄里程碑</h3><p>阶段目标达成后保留记录，再设置下一个目标。</p><div class="goalModalList" id="goalHistoryList"></div><div class="formBtns"><button class="btn" id="closeGoalHistory">关闭</button></div></div></div><div class="toast" id="toast"></div>
+<div class="modalWrap" id="goalHistoryModal"><div class="modal"><h3>我的储蓄里程碑</h3><p>只有手动确认后的目标才会保留。已达成记录支持编辑和删除。</p><div class="goalModalList" id="goalHistoryList"></div><div class="formBtns"><button class="btn" id="closeGoalHistory">关闭</button></div></div></div>
+
+<div class="modalWrap" id="goalEditModal"><div class="modal">
+  <h3>编辑已达成目标</h3>
+  <p>修正误填的目标金额、达成日期或达成时储蓄。</p>
+  <label for="goalEditAmount">目标金额</label>
+  <input id="goalEditAmount" type="number" min="0" step="0.01" inputmode="decimal">
+  <label for="goalEditDate" style="margin-top:12px">达成日期</label>
+  <input id="goalEditDate" type="date">
+  <label for="goalEditValue" style="margin-top:12px">达成时储蓄</label>
+  <input id="goalEditValue" type="number" min="0" step="0.01" inputmode="decimal">
+  <div class="formBtns"><button class="btn" id="cancelGoalEdit">取消</button><button class="btn primary" id="saveGoalEdit">保存修改</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
 <script>
 const KEY="wealth_dashboard_v1",state={target:0,records:[],updatedAt:null,editing:null,goalHistory:[]},$=id=>document.getElementById(id);
 const money=n=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Number(n)||0),optionalNum=v=>{if(v===""||v===null||v===undefined)return null;const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},monthText=m=>{const[y,mm]=m.split("-");return`${y}年${Number(mm)}月`},num=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>$("toast").classList.remove("show"),1800)}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[]}catch(e){toast("本地数据读取失败")}}
-function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.12,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
+function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.13,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
 function latest(){return[...state.records].sort((a,b)=>b.month.localeCompare(a.month))[0]||null}
 
 const ICONS={
@@ -952,17 +1057,78 @@ function renderMonthStatus(){const key=currentMonthKey(),r=state.records.find(x=
 
 function startRows(year=null){return [...state.records].filter(r=>!year||r.month.startsWith(year+"-")).sort((a,b)=>a.month.localeCompare(b.month))}
 function startChanges(rows){const a=[];for(let i=1;i<rows.length;i++)a.push({month:rows[i].month,value:Number(rows[i].start)-Number(rows[i-1].start)});return a}
-function renderSpeed(){const c=startChanges(startRows()).slice(-3),box=$("speedMonths");box.innerHTML="";if(c.length<3){$("speedValue").textContent="—";$("speedEta").textContent="至少需要连续4个月的月初储蓄数据"}else{const avg=c.reduce((s,x)=>s+x.value,0)/3;$("speedValue").textContent=`${avg>0?"+":""}${money(avg)} / 月`;const r=latest(),cur=r?effectiveValue(r):0,remain=Math.max(state.target-cur,0);$("speedEta").innerHTML=!state.target?"设置阶段目标后可估算达标时间":remain<=0?"当前阶段目标已经达到":avg>0?`<span class="etaLabel">按当前速度，预计约</span><strong>${Math.ceil(remain/avg)} 个月</strong><span class="etaTarget">达到 ${money(state.target)}</span>`:"近3次平均增长未为正，暂不估算"}c.forEach(x=>{const d=document.createElement("div");d.className="speedMonth";d.innerHTML=`<span>${monthText(x.month)}</span><strong class="${x.value>0?"pos":x.value<0?"neg":"neu"}">${x.value>0?"+":""}${money(x.value)}</strong>`;box.appendChild(d)})}
+function renderSpeed(){
+ const c=startChanges(startRows()).slice(-3),box=$("speedMonths");box.innerHTML="";
+ if(c.length<3){
+   $("speedValue").textContent="—";
+   $("speedEta").innerHTML='<span class="speedEtaLabel">近3次累计增加</span><strong class="neu">—</strong>';
+ }else{
+   const total=c.reduce((s,x)=>s+x.value,0),avg=total/3;
+   $("speedValue").textContent=`${avg>0?"+":""}${money(avg)} / 月`;
+   $("speedValue").className=`speedValue ${avg>0?"pos":avg<0?"neg":"neu"}`;
+   $("speedEta").innerHTML=`<span class="speedEtaLabel">近3次累计增加</span><strong class="${total>0?"pos":total<0?"neg":"neu"}">${total>0?"+":""}${money(total)}</strong>`;
+ }
+ c.forEach(x=>{const d=document.createElement("div");d.className="speedMonth";d.innerHTML=`<span>${monthText(x.month)}</span><strong class="${x.value>0?"pos":x.value<0?"neg":"neu"}">${x.value>0?"+":""}${money(x.value)}</strong>`;box.appendChild(d)})
+}
+
+let editingGoalIndex=null;
+
 function renderGoalHistory(){
  const done=state.goalHistory||[];
  if($("goalDoneCount"))$("goalDoneCount").textContent=`${done.length} 个`;
  if($("goalLatestDone"))$("goalLatestDone").textContent=done.length?`最近：${money(done.at(-1).amount)}`:"尚无记录";
  const box=$("goalHistoryList");box.innerHTML="";
- const rows=[];if(state.target)rows.push({amount:state.target,current:true});[...done].reverse().forEach(g=>rows.push(g));
- if(!rows.length){box.innerHTML='<div class="empty">还没有目标记录</div>';return}
- rows.forEach(g=>{const d=document.createElement("div");d.className="goalHistoryItem";d.innerHTML=`<div class="goalHistoryTop"><span>${money(g.amount)}</span><span class="${g.current?"goalCurrent":"goalDone"}">${g.current?"当前目标":"✓ 已达成"}</span></div><div class="goalHistoryMeta">${g.current?"继续积累中":`达成日期：${g.achievedAt||"—"} · 达成时储蓄 ${money(g.achievedValue)}`}</div>`;box.appendChild(d)})
+ if(state.target){
+   const cur=document.createElement("div");
+   cur.className="goalHistoryItem";
+   cur.innerHTML=`<div class="goalHistoryTop"><span>${money(state.target)}</span><span class="goalCurrent">当前目标</span></div><div class="goalHistoryMeta">继续积累中</div><div class="goalHistoryCurrentNote">当前目标可在首页直接设置 / 更新，不属于已达成记录。</div>`;
+   box.appendChild(cur);
+ }
+ if(!done.length && !state.target){box.innerHTML='<div class="empty">还没有目标记录</div>';return}
+ [...done].reverse().forEach((g,reverseIndex)=>{
+   const actualIndex=done.length-1-reverseIndex;
+   const d=document.createElement("div");
+   d.className="goalHistoryItem";
+   d.innerHTML=`<div class="goalHistoryTop"><span>${money(g.amount)}</span><span class="goalDone">✓ 已达成</span></div><div class="goalHistoryMeta">达成日期：${g.achievedAt||"—"} · 达成时储蓄 ${money(g.achievedValue)}</div><div class="goalHistoryActions"><button class="goalHistoryAction" data-goal-edit="${actualIndex}">编辑</button><button class="goalHistoryAction delete" data-goal-delete="${actualIndex}">删除</button></div>`;
+   box.appendChild(d);
+ });
+ box.querySelectorAll("[data-goal-edit]").forEach(btn=>btn.onclick=()=>openGoalEdit(Number(btn.dataset.goalEdit)));
+ box.querySelectorAll("[data-goal-delete]").forEach(btn=>btn.onclick=()=>deleteGoalHistory(Number(btn.dataset.goalDelete)));
 }
-function archiveReachedGoal(){if(!state.target)return;const r=latest();if(!r)return;const cur=effectiveValue(r);if(cur<state.target)return;const exists=(state.goalHistory||[]).some(g=>Number(g.amount)===Number(state.target));if(!exists){state.goalHistory.push({amount:Number(state.target),achievedAt:new Date().toISOString().slice(0,10),achievedValue:cur});save()}}
+
+function currentGoalCanConfirm(){
+ if(!state.target)return false;
+ const r=latest();if(!r)return false;
+ const cur=effectiveValue(r);
+ if(cur<state.target)return false;
+ return !(state.goalHistory||[]).some(g=>Number(g.amount)===Number(state.target));
+}
+function renderGoalConfirmBanner(){
+ const banner=$("goalReachedBanner");if(!banner)return;
+ const can=currentGoalCanConfirm();
+ banner.classList.toggle("hidden",!can);
+ if(can)$("goalReachedAmount").textContent=money(state.target);
+}
+function confirmGoalReached(){
+ if(!currentGoalCanConfirm())return toast("当前目标暂不需要确认");
+ const r=latest(),cur=effectiveValue(r);
+ state.goalHistory.push({amount:Number(state.target),achievedAt:new Date().toISOString().slice(0,10),achievedValue:cur});
+ save();render();toast("🎉 已记录为达成目标");
+}
+function openGoalEdit(index){
+ const g=(state.goalHistory||[])[index];if(!g)return;
+ editingGoalIndex=index;
+ $("goalEditAmount").value=g.amount??"";
+ $("goalEditDate").value=g.achievedAt||"";
+ $("goalEditValue").value=g.achievedValue??"";
+ $("goalEditModal").classList.add("open");
+}
+function deleteGoalHistory(index){
+ const g=(state.goalHistory||[])[index];if(!g)return;
+ if(!confirm(`确认删除已达成目标 ${money(g.amount)} 吗？`))return;
+ state.goalHistory.splice(index,1);save();render();renderGoalHistory();toast("已删除目标记录");
+}
+
 function renderYearOptions(){const s=$("yearSelect"),ys=[...new Set(state.records.map(r=>r.month.slice(0,4)))].sort((a,b)=>b.localeCompare(a)),now=String(new Date().getFullYear()),old=s.value,opts=ys.length?ys:[now];s.innerHTML=opts.map(y=>`<option value="${y}">${y}年</option>`).join("");s.value=opts.includes(old)?old:(opts.includes(now)?now:opts[0]);renderYearSummary()}
 function renderYearSummary(){
  const y=$("yearSelect").value,rows=startRows(y);
@@ -1056,8 +1222,8 @@ function drawTrendChart(){
   canvas._chartRows=rows;canvas._chartX=x;canvas._chartPad=pad;canvas._chartW=W;
 }
 
-function render(){archiveReachedGoal();renderMonthStatus();renderSpeed();renderGoalHistory();renderYearOptions();const l=latest(),current=l?(l.end===null||l.end===undefined?Number(l.start):Number(l.end)):0,fund=l?Number(l.fund):0,remain=state.target?Math.max(state.target-current,0):0,p=state.target?Math.min(current/state.target*100,100):0;
-$("targetValue").textContent=money(state.target);$("currentValue").textContent=money(current);$("fundValue").textContent=money(fund);$("remainingValue").textContent=money(remain);$("remainingHint").textContent=state.target?(current>=state.target?"目标已完成":"还需继续积累"):"尚未设置目标";$("rate").textContent=`${p.toFixed(p%1?1:0)}%`;$("bar").style.width=`${p}%`;$("updated").textContent=state.updatedAt?(()=>{const d=new Date(state.updatedAt);const mm=d.getMonth()+1,dd=d.getDate(),hh=String(d.getHours()).padStart(2,"0"),mi=String(d.getMinutes()).padStart(2,"0");return`更新于 ${mm}/${dd} ${hh}:${mi}`})():"尚未更新";
+function render(){renderMonthStatus();renderSpeed();renderGoalHistory();renderYearOptions();const l=latest(),current=l?(l.end===null||l.end===undefined?Number(l.start):Number(l.end)):0,fund=l?Number(l.fund):0,remain=state.target?Math.max(state.target-current,0):0,p=state.target?Math.min(current/state.target*100,100):0;
+renderGoalConfirmBanner();$("targetValue").textContent=money(state.target);$("currentValue").textContent=money(current);$("fundValue").textContent=money(fund);$("remainingValue").textContent=money(remain);$("remainingHint").textContent=state.target?(current>=state.target?"目标已完成":"还需继续积累"):"尚未设置目标";$("rate").textContent=`${p.toFixed(p%1?1:0)}%`;$("bar").style.width=`${p}%`;$("updated").textContent=state.updatedAt?(()=>{const d=new Date(state.updatedAt);const mm=d.getMonth()+1,dd=d.getDate(),hh=String(d.getHours()).padStart(2,"0"),mi=String(d.getMinutes()).padStart(2,"0");return`更新于 ${mm}/${dd} ${hh}:${mi}`})():"尚未更新";
 const list=[...state.records].sort((a,b)=>b.month.localeCompare(a.month));$("records").innerHTML="";$("clearBtn").classList.toggle("hidden",!list.length);if(!list.length){drawTrendChart();$("records").innerHTML='<div class="card empty">还没有月度记录。<br>填写上方表单后，这里会生成月度汇总记录。</div>';return}
 const table=document.createElement("div");table.className="recordTableWrap";
 table.innerHTML=`<table class="recordTable"><thead><tr>
@@ -1090,7 +1256,7 @@ function edit(m){const r=state.records.find(x=>x.month===m);if(!r)return;state.e
 function remove(m){if(!confirm(`确认删除 ${monthText(m)} 的记录吗？`))return;state.records=state.records.filter(r=>r.month!==m);if(state.editing===m)reset();save();render();toast("记录已删除")}
 $("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num($("start").value),end=optionalNum($("end").value),fund=num($("fund").value),note=$("note").value.trim();if(!month||start===null||fund===null)return toast("请填写月份、月初储蓄和公积金");if(state.records.some(r=>r.month===month&&r.month!==state.editing))return toast("该月份已存在，请编辑已有记录");const wasEditing=!!state.editing,r={month,start,end,fund,note};state.records=wasEditing?state.records.map(x=>x.month===state.editing?r:x):[...state.records,r];save();reset();render();toast(wasEditing?"记录已更新":"记录已保存")};
 $("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value=state.target||"";$("modal").classList.add("open")};$("closeModal").onclick=()=>$("modal").classList.remove("open");$("saveTarget").onclick=()=>{const v=num($("targetInput").value);if(v===null)return toast("请输入有效目标金额");state.target=v;save();render();$("modal").classList.remove("open");toast("目标已保存")};$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("open")};
-$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"正在暴富ing",version:2.12,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`正在暴富ing-数据备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
+$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"正在暴富ing",version:2.13,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`正在暴富ing-数据备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
 $("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:optionalNum(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[];save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
 $("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});$("yearSelect").addEventListener("change",renderYearSummary);
 
@@ -1103,13 +1269,25 @@ $("yearUpIcon").innerHTML=ICONS.up;
 $("yearDownIcon").innerHTML=ICONS.down;
 $("yearFundIcon").innerHTML=ICONS.coins;
 $("yearGoalIcon").innerHTML=ICONS.flag;
-$("openGoalHistory").onclick=()=>{$("goalHistoryModal").classList.add("open");renderGoalHistory()};$("closeGoalHistory").onclick=()=>$("goalHistoryModal").classList.remove("open");$("goalHistoryModal").addEventListener("click",e=>{if(e.target===$("goalHistoryModal"))$("goalHistoryModal").classList.remove("open")});
+$("openGoalHistory").onclick=()=>{$("goalHistoryModal").classList.add("open");renderGoalHistory()};
+$("closeGoalHistory").onclick=()=>$("goalHistoryModal").classList.remove("open");
+$("goalHistoryModal").addEventListener("click",e=>{if(e.target===$("goalHistoryModal"))$("goalHistoryModal").classList.remove("open")});
+$("confirmGoalReached").onclick=confirmGoalReached;
+$("cancelGoalEdit").onclick=()=>{$("goalEditModal").classList.remove("open");editingGoalIndex=null};
+$("saveGoalEdit").onclick=()=>{
+ if(editingGoalIndex===null)return;
+ const amount=num($("goalEditAmount").value),date=$("goalEditDate").value,value=num($("goalEditValue").value);
+ if(amount===null||!date||value===null)return toast("请完整填写目标金额、日期和达成时储蓄");
+ state.goalHistory[editingGoalIndex]={...state.goalHistory[editingGoalIndex],amount,achievedAt:date,achievedValue:value};
+ save();$("goalEditModal").classList.remove("open");editingGoalIndex=null;render();renderGoalHistory();toast("目标记录已更新");
+};
+$("goalEditModal").addEventListener("click",e=>{if(e.target===$("goalEditModal")){$("goalEditModal").classList.remove("open");editingGoalIndex=null}});
 
 document.querySelectorAll(".sectionHead h2").forEach(h=>{
   const t=h.textContent.trim();
   let ic="";
   if(t.includes("本月状态")) ic=ICONS.calendar;
-  else if(t.includes("储蓄速度")) ic=ICONS.rocket;
+  else if(t.includes("储蓄速度")||t.includes("储蓄节奏")) ic=ICONS.rocket;
   else if(t.includes("年度汇总")||t.includes("年度储蓄")) ic=ICONS.annual;
   else if(t.includes("新增月度记录")||t.includes("编辑月度记录")) ic=ICONS.add;
   else if(t.includes("月度趋势")||t.includes("储蓄趋势")) ic=ICONS.trend;
