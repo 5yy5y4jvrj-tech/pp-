@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f6f9f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="财富仪表盘">
-<title>正在暴富ing · V2.13</title>
+<title>正在暴富ing · V2.14</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="favicon-32.png">
@@ -905,6 +905,351 @@ input[type="month"]:focus{
   .speedEta strong{font-size:18px!important}
 }
 
+
+/* V2.14 — bright pastel sticker UI */
+:root{
+  --bg:#f5f1fa;
+  --card:#ffffff;
+  --text:#151515;
+  --muted:#85818c;
+  --line:#ebe6ef;
+
+  --green:#60d394;
+  --green-deep:#159765;
+  --green-soft:#eafbf2;
+
+  --pink:#ffabc6;
+  --pink-deep:#d86588;
+  --pink-soft:#fff0f5;
+
+  --yellow:#ffd84d;
+  --yellow-deep:#d79a18;
+  --yellow-soft:#fff8d9;
+
+  --purple:#d7c2ff;
+  --purple-deep:#8d70d6;
+  --purple-soft:#f4edff;
+
+  --blue:#bfe4ff;
+  --blue-deep:#5a9fd7;
+  --blue-soft:#eef8ff;
+
+  --orange:#ffb66e;
+  --orange-deep:#dc8240;
+  --orange-soft:#fff1e5;
+
+  --cream:#fff9ef;
+  --shadow:0 10px 28px rgba(73,55,88,.07);
+}
+
+body{
+  background:linear-gradient(180deg,#f7f3fb 0%,#f5f1fa 52%,#f8f5f2 100%);
+  color:var(--text);
+}
+.wrap{max-width:860px}
+
+/* 顶部 */
+.topHeader h1{color:#151515}
+.brandSub,.updated{color:#9a95a1}
+.brandEmoji{
+  background:var(--yellow-soft);
+  border-radius:12px;
+  box-shadow:0 3px 10px rgba(215,154,24,.09);
+}
+
+/* 分区标题与图标：高明度彩色贴纸 */
+.sectionTitle{
+  color:#181818;
+  font-weight:850;
+}
+.sectionTitle .iconBadge{
+  border-radius:11px;
+  box-shadow:none;
+}
+section:nth-of-type(1) .sectionTitle .iconBadge{background:var(--green-soft);color:var(--green-deep)}
+section:nth-of-type(2) .sectionTitle .iconBadge{background:var(--pink-soft);color:var(--pink-deep)}
+section:nth-of-type(3) .sectionTitle .iconBadge{background:var(--yellow-soft);color:var(--yellow-deep)}
+section:nth-of-type(4) .sectionTitle .iconBadge{background:var(--purple-soft);color:var(--purple-deep)}
+section:nth-of-type(5) .sectionTitle .iconBadge{background:var(--blue-soft);color:var(--blue-deep)}
+section:nth-of-type(6) .sectionTitle .iconBadge{background:var(--pink-soft);color:var(--pink-deep)}
+
+/* 通用卡片 */
+.card{
+  border:1px solid rgba(225,218,231,.95);
+  box-shadow:var(--shadow);
+  background:#fff;
+}
+
+/* 顶部主储蓄卡：不再暗绿，改成明亮薄荷主视觉 */
+.hero{
+  background:linear-gradient(135deg,#dff8ec 0%,#f1fbf6 58%,#fff6da 100%);
+  color:var(--text);
+  border:1px solid #dcefe7;
+  box-shadow:0 14px 32px rgba(77,151,120,.10);
+}
+.hero:after{
+  width:160px;height:160px;
+  right:-58px;bottom:-58px;
+  border:18px solid rgba(255,255,255,.32);
+}
+.hero .label,.hero .hint{color:#6f7d77}
+.heroValue{color:#111}
+.heroMeta{color:#59655f}
+.heroMeta strong{color:var(--green-deep)}
+.hero .bar{background:#dce9e3}
+.hero .bar span{background:linear-gradient(90deg,#62d69a,#9de6bd)}
+.heroTopLine .iconBadge,
+.heroInfoHead .iconBadge,
+.hero .iconBadge{
+  background:rgba(255,255,255,.62)!important;
+  color:var(--green-deep)!important;
+}
+.heroInfoGrid{border-top-color:#cfe4db}
+.heroInfoItem+.heroInfoItem{border-left-color:#cfe4db}
+.heroInfoHead{color:#6d7974}
+.heroInfoValue,.heroInfoLink{color:#171717}
+.heroInfoSub{color:#8b918e}
+
+/* 达成目标：明显但轻快 */
+.goalReachedBanner{
+  background:linear-gradient(135deg,#fff0f5 0%,#fff8d9 50%,#eafbf2 100%);
+  border-color:#f1dce5;
+}
+.goalReachedIcon{background:#fff8d9}
+.goalReachedEyebrow{color:var(--pink-deep)}
+.goalReachedTitle span{color:var(--green-deep)}
+.goalReachedBtn{
+  background:#151515;
+  color:#fff;
+}
+
+/* 本月状态 */
+.monthCard{background:#fff}
+.monthMain{
+  background:linear-gradient(180deg,#ffffff,#f8fffb);
+  border-color:#e7eee9;
+}
+.monthCurrent{color:var(--green-deep)}
+.badge.running{
+  background:var(--yellow-soft);
+  color:var(--orange-deep);
+}
+.badge.done{
+  background:var(--green-soft);
+  color:var(--green-deep);
+}
+.monthMinor.pending{
+  background:var(--orange-soft);
+  color:var(--orange-deep);
+}
+.monthNote{
+  background:var(--cream);
+  border-color:#f0e7d5;
+}
+.monthNote::before{color:var(--orange)}
+
+/* 储蓄节奏：重点改版 */
+.speedCard{
+  padding:16px;
+}
+.speedMainPanel{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:14px;
+  align-items:end;
+  padding:17px 16px 15px;
+  background:linear-gradient(135deg,#eafbf2 0%,#f5fffa 100%);
+  border:1px solid #e0f3e9;
+  border-radius:18px;
+}
+.speedValue{
+  font-size:38px;
+  line-height:1.05;
+  color:var(--green-deep);
+  letter-spacing:-.6px;
+}
+.speedMiniBars{
+  display:flex;
+  align-items:flex-end;
+  gap:5px;
+  height:46px;
+  padding-right:2px;
+}
+.speedMiniBars i{
+  display:block;
+  width:11px;
+  border-radius:8px 8px 3px 3px;
+}
+.speedMiniBars i:nth-child(1){height:20px;background:#bdebd0}
+.speedMiniBars i:nth-child(2){height:31px;background:#8fddb2}
+.speedMiniBars i:nth-child(3){height:43px;background:#5ed195}
+
+.speedEta{
+  margin-top:10px!important;
+  min-width:0;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px;
+  padding:11px 14px!important;
+  border-radius:15px;
+  background:linear-gradient(90deg,var(--yellow-soft),#fffdf4);
+  border:1px solid #f4e8bb;
+}
+.speedEtaLabel{
+  color:#77736e;
+  font-size:12px;
+}
+.speedEta strong{
+  font-size:18px!important;
+  color:var(--green-deep)!important;
+  white-space:nowrap;
+}
+.speedRecentLabel{
+  margin-top:14px!important;
+}
+.speedMonths{
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+  margin-top:9px;
+}
+.speedMonth{
+  padding:11px 7px;
+  border-radius:14px;
+  border:1px solid transparent;
+}
+.speedMonth:nth-child(1){
+  background:var(--pink-soft);
+  border-color:#f7e2ea;
+}
+.speedMonth:nth-child(2){
+  background:var(--green-soft);
+  border-color:#dff3e8;
+}
+.speedMonth:nth-child(3){
+  background:var(--yellow-soft);
+  border-color:#f5e9b9;
+}
+.speedMonth span{color:#89838d}
+.speedMonth strong{color:var(--green-deep)!important}
+
+/* 年度储蓄 */
+.yearCard{background:#fff}
+.yearCoreGrid{
+  border-bottom-color:#ece7f0;
+}
+.yearCoreItem+.yearCoreItem{border-left-color:#ece7f0}
+.yearCoreValue{color:#171717}
+#yearChange.pos{color:var(--green-deep)}
+#yearRemaining{color:var(--purple-deep)!important}
+.yearHighlightsRow{
+  background:#fff;
+  border-color:#eee7f2;
+}
+.yearHighlightItem:nth-child(1){background:var(--yellow-soft)}
+.yearHighlightItem:nth-child(2){background:var(--green-soft)}
+.yearHighlightItem:nth-child(3){background:var(--pink-soft)}
+.yearHighlightItem+.yearHighlightItem{border-left-color:#eee7f2}
+.yearHighlightItem:nth-child(1) .yearHighlightIcon,
+.yearHighlightItem:nth-child(1) .iconBadge{background:#fff0a8;color:var(--yellow-deep)}
+.yearHighlightItem:nth-child(2) .yearHighlightIcon,
+.yearHighlightItem:nth-child(2) .iconBadge{background:#c9f2da;color:var(--green-deep)}
+.yearHighlightItem:nth-child(3) .yearHighlightIcon,
+.yearHighlightItem:nth-child(3) .iconBadge{background:#ffd8e4;color:var(--pink-deep)}
+.yearSubCard:first-child{background:var(--purple-soft)}
+.yearSubCard:nth-child(2){background:var(--green-soft)}
+.yearSubIcon{background:#fff!important}
+.yearSubCard:first-child .yearSubIcon{color:var(--purple-deep)}
+.yearSubCard:nth-child(2) .yearSubIcon{color:var(--green-deep)}
+
+/* 表单 */
+.form{background:#fff}
+input,textarea,.yearSelect{
+  background:#fbfafd;
+  border-color:#e9e4ee;
+}
+input:focus,textarea:focus{
+  border-color:#c8b6ef;
+  box-shadow:0 0 0 3px rgba(215,194,255,.22);
+}
+.btn.primary{
+  background:#151515;
+  border-color:#151515;
+}
+.btn{
+  border-color:#e7e1eb;
+}
+.small{background:var(--purple-soft);color:var(--purple-deep)}
+.small.del{background:var(--pink-soft);color:var(--pink-deep)}
+
+/* 趋势图 */
+.chartCard{background:#fff}
+.legendDot.start{background:var(--green-deep)!important}
+.legendDot.end{background:#c7b8d8!important}
+.chartTip{
+  border-color:#e8dff0;
+  box-shadow:0 10px 24px rgba(82,65,101,.10);
+}
+.chartPrimaryNote{
+  background:var(--purple-soft);
+  border-radius:12px;
+  padding:9px 11px;
+}
+.chartSummaryValue,.chartSummaryRate{
+  background:var(--green-soft);
+  color:var(--green-deep);
+}
+
+/* 月度记录 */
+.recordTableWrap{
+  border-color:#e9e4ed;
+}
+.recordTable th{
+  background:var(--purple-soft);
+  color:#77717e;
+}
+.recordTable td.pos{color:var(--green-deep)}
+.recordTable td.neg,.recordTable td.consume{color:var(--orange-deep)}
+.statusPill.running{background:var(--yellow-soft);color:var(--orange-deep)}
+.statusPill.done{background:var(--green-soft);color:var(--green-deep)}
+.tableAction{color:var(--purple-deep)}
+.tableAction.delete{color:var(--pink-deep)}
+
+/* 里程碑 */
+.goalHistoryItem{background:#fff;border-color:#ebe4ef}
+.goalHistoryAction{background:var(--purple-soft);color:var(--purple-deep)}
+.goalHistoryAction.delete{background:var(--pink-soft);color:var(--pink-deep)}
+.goalHistoryCurrentNote{background:var(--yellow-soft)}
+
+/* Mobile */
+@media(max-width:640px){
+  .speedMainPanel{
+    padding:15px 14px 14px;
+  }
+  .speedValue{
+    font-size:34px;
+    white-space:nowrap;
+  }
+  .speedEta{
+    display:flex!important;
+    flex-direction:row!important;
+    margin-top:9px!important;
+  }
+  .speedEta strong{
+    font-size:17px!important;
+  }
+  .speedMonths{
+    gap:7px;
+  }
+  .speedMonth{
+    padding:10px 4px;
+  }
+  .speedMonth strong{
+    font-size:15px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -959,7 +1304,19 @@ input[type="month"]:focus{
 <div class="monthMain"><div class="label">当前储蓄</div><div class="monthCurrent" id="monthCurrentValue">—</div></div>
 <div class="monthSplit"><div><div class="label">月初储蓄</div><div class="monthMinor" id="monthStartValue">—</div></div><div><div class="label">月内变化</div><div class="monthMinor" id="monthChangeValue">—</div></div></div>
 <div class="monthNote" id="monthStatusHint">新增本月记录后显示</div></div></section>
-<section><div class="sectionHead"><h2>储蓄节奏</h2></div><div class="card speedCard"><div class="speedTop"><div><div class="label">近3次月初净增加平均</div><div class="speedValue" id="speedValue">—</div></div><div class="speedEta" id="speedEta"><span class="speedEtaLabel">近3次累计增加</span><strong>—</strong></div></div><div class="label" style="margin-top:15px">最近3次月初变化</div><div class="speedMonths" id="speedMonths"></div></div></section><section><div class="sectionHead"><h2>年度储蓄</h2></div>
+<section><div class="sectionHead"><h2>储蓄节奏</h2></div>
+<div class="card speedCard">
+  <div class="speedMainPanel">
+    <div>
+      <div class="label">近3次月初净增加平均</div>
+      <div class="speedValue" id="speedValue">—</div>
+    </div>
+    <div class="speedMiniBars" aria-hidden="true"><i></i><i></i><i></i></div>
+  </div>
+  <div class="speedEta" id="speedEta"><span class="speedEtaLabel">近3次累计增加</span><strong>—</strong></div>
+  <div class="label speedRecentLabel">最近3次月初变化</div>
+  <div class="speedMonths" id="speedMonths"></div>
+</div></section><section><div class="sectionHead"><h2>年度储蓄</h2></div>
 <div class="card yearCard">
   <div class="yearHead"><div class="chartTitle" id="yearTitle">年度储蓄概览 · 2026</div><select class="yearSelect" id="yearSelect"></select></div>
   <div class="yearCoreGrid">
@@ -1034,7 +1391,7 @@ const KEY="wealth_dashboard_v1",state={target:0,records:[],updatedAt:null,editin
 const money=n=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Number(n)||0),optionalNum=v=>{if(v===""||v===null||v===undefined)return null;const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},monthText=m=>{const[y,mm]=m.split("-");return`${y}年${Number(mm)}月`},num=v=>{const n=Number(v);return Number.isFinite(n)&&n>=0?n:null},esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>$("toast").classList.remove("show"),1800)}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;state.target=num(d.target)??0;state.records=Array.isArray(d.records)?d.records:[];state.updatedAt=d.updatedAt||null;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[]}catch(e){toast("本地数据读取失败")}}
-function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.13,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
+function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify({version:2.14,target:state.target,records:state.records,updatedAt:state.updatedAt,goalHistory:state.goalHistory}))}
 function latest(){return[...state.records].sort((a,b)=>b.month.localeCompare(a.month))[0]||null}
 
 const ICONS={
@@ -1256,7 +1613,7 @@ function edit(m){const r=state.records.find(x=>x.month===m);if(!r)return;state.e
 function remove(m){if(!confirm(`确认删除 ${monthText(m)} 的记录吗？`))return;state.records=state.records.filter(r=>r.month!==m);if(state.editing===m)reset();save();render();toast("记录已删除")}
 $("form").onsubmit=e=>{e.preventDefault();const month=$("month").value,start=num($("start").value),end=optionalNum($("end").value),fund=num($("fund").value),note=$("note").value.trim();if(!month||start===null||fund===null)return toast("请填写月份、月初储蓄和公积金");if(state.records.some(r=>r.month===month&&r.month!==state.editing))return toast("该月份已存在，请编辑已有记录");const wasEditing=!!state.editing,r={month,start,end,fund,note};state.records=wasEditing?state.records.map(x=>x.month===state.editing?r:x):[...state.records,r];save();reset();render();toast(wasEditing?"记录已更新":"记录已保存")};
 $("cancelBtn").onclick=reset;$("openTarget").onclick=()=>{$("targetInput").value=state.target||"";$("modal").classList.add("open")};$("closeModal").onclick=()=>$("modal").classList.remove("open");$("saveTarget").onclick=()=>{const v=num($("targetInput").value);if(v===null)return toast("请输入有效目标金额");state.target=v;save();render();$("modal").classList.remove("open");toast("目标已保存")};$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("open")};
-$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"正在暴富ing",version:2.13,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`正在暴富ing-数据备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
+$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"正在暴富ing",version:2.14,target:state.target,records:state.records,goalHistory:state.goalHistory,updatedAt:state.updatedAt},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`正在暴富ing-数据备份-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast("数据已导出")};
 $("importBtn").onclick=()=>$("fileInput").click();$("fileInput").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records))throw 0;const rec=d.records.map(r=>({month:String(r.month||""),start:num(r.start),end:optionalNum(r.end),fund:num(r.fund),note:typeof r.note==="string"?r.note:""}));if(rec.some(r=>!/^\d{4}-\d{2}$/.test(r.month)||r.start===null||r.fund===null)||new Set(rec.map(r=>r.month)).size!==rec.length)throw 0;if(!confirm("导入会覆盖当前浏览器中的全部数据，是否继续？"))return;state.target=num(d.target)??0;state.records=rec;state.goalHistory=Array.isArray(d.goalHistory)?d.goalHistory:[];save();reset();render();toast("数据导入成功")}catch{toast("导入失败：文件格式不正确")}};
 $("clearBtn").onclick=()=>{if(!confirm("确认清空全部月度记录吗？储蓄目标会保留。"))return;state.records=[];save();reset();render();toast("月度记录已清空")};window.addEventListener("resize",()=>{clearTimeout(window.chartResizeTimer);window.chartResizeTimer=setTimeout(drawTrendChart,120)});$("yearSelect").addEventListener("change",renderYearSummary);
 
